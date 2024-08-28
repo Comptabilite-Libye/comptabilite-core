@@ -33,6 +33,8 @@ public class Beneficiaire implements Serializable {
     @Column(name = "code")
     private Integer code;
 
+    
+    
     @Size(max = 200)
     @NotNull
     @Column(name = "code_saisie", length = 200)
