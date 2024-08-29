@@ -22,8 +22,8 @@ spring:
       active: prod,javamelody
   
     data:
-        rest:
-            base-path: /api/data
+      auditing:
+        auditor-aware-ref: auditorProvider
     output:
         ansi:
             enabled: DETECT
@@ -54,14 +54,14 @@ spring:
         show-sql: false
         generate-ddl: true
         hibernate:
-            ddl-auto: none
+            ddl-auto: update
             use_sql_comments : true
             show-sql: true
             naming:
                 implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
                 physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         properties:
-#            hibernate.default_schema: PARAM
+            hibernate.default_schema: Comptabilite
             hibernate.id.new_generator_mappings: true
             hibernate.cache.use_second_level_cache: false
             hibernate.cache.use_query_cache: false

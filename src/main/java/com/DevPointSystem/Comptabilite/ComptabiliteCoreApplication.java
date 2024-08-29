@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
  
 @SpringBootApplication
 @EnableAutoConfiguration
+@EnableJpaAuditing
 public class ComptabiliteCoreApplication {
 
 //	public static void main(String[] args) {

@@ -17,6 +17,10 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.Size; 
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
+ 
+ 
 
 /**
  *
@@ -24,8 +28,8 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "beneficiaire", schema = "param")
-//@Audited
-//@AuditTable("beneficiaire_AUD")
+@Audited
+@AuditTable("beneficiaire_AUD")
 public class Beneficiaire implements Serializable {
 
     @Id
