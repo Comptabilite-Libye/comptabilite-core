@@ -12,6 +12,7 @@ import com.DevPointSystem.Comptabilite.Authentification.service.AuthenticationSe
 import com.DevPointSystem.Comptabilite.Authentification.service.JwtService;
 import com.DevPointSystem.Comptabilite.Authentification.service.UserDetailsImpl;
 import com.DevPointSystem.Comptabilite.Authentification.web.Response.MessageResponse;
+import java.util.List;
 /**
  *
  * @author Administrator
@@ -19,9 +20,11 @@ import com.DevPointSystem.Comptabilite.Authentification.web.Response.MessageResp
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/api/auth")
@@ -43,7 +46,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(registeredUser);
     }
 
-    @PostMapping("/login")
+    @PostMapping("login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
@@ -60,6 +63,14 @@ public class AuthenticationController {
         Long userId = userDetails.getId();
 //    refreshTokenService.deleteByUserId(userId);
         return ResponseEntity.ok(new MessageResponse("Log out successful!"));
+    }
+    
+    
+       @GetMapping("/authen")
+    public ResponseEntity<List<User>> authentification(@RequestParam("user") String login, @RequestParam("pass") String password) {
+        List<User> dd = authenticationService.findone(login, password);
+        return ResponseEntity.ok().body(dd);
+
     }
 
 }

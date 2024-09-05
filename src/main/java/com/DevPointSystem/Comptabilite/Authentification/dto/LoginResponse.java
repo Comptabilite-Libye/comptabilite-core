@@ -4,15 +4,19 @@
  */
 package com.DevPointSystem.Comptabilite.Authentification.dto;
 
+import java.util.Date;
+
 /**
  *
  * @author Administrator
  */
-
 public class LoginResponse {
+
     private String token;
 
     private long expiresIn;
+
+    private Date expiration;
 
     public String getToken() {
         return token;
@@ -32,11 +36,26 @@ public class LoginResponse {
         return this;
     }
 
+    public Date getExpiration() {
+        return expiration;
+    }
+
+    public LoginResponse setExpiration(Date expiration) {
+        this.expiration = expiration;
+        return this;
+    }
+
+//    @Override
+//    public String toString() {
+//        return "LoginResponse{" +
+//                "token='" + token + '\'' +
+//                ", expiresIn=" + expiresIn +
+//                '}';
+//    }
+//    
     @Override
     public String toString() {
-        return "LoginResponse{" +
-                "token='" + token + '\'' +
-                ", expiresIn=" + expiresIn +
-                '}';
+        return "LoginResponse{" + "token=" + token + ", expiresIn=" + expiresIn + ", expiration=" + expiration + '}';
     }
+
 }

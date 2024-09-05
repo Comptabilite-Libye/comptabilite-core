@@ -31,36 +31,42 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/parametrage/")
 public class DeviseRessource {
-     private final DeviseService deviseService;
 
+    private final DeviseService deviseService;
+    
     public DeviseRessource(DeviseService deviseService) {
         this.deviseService = deviseService;
     }
-
+    
     @GetMapping("devise/{code}")
     public ResponseEntity<DeviseDTO> getDeviseByCode(@PathVariable Integer code) {
         DeviseDTO dto = deviseService.findOne(code);
         return ResponseEntity.ok().body(dto);
     }
-
+    
     @GetMapping("devise/all")
     public ResponseEntity<List<DeviseDTO>> getAllDevise() {
 //        List<DdeAchat> ddeAchatList = ddeAchatService.findAllDdeAchat();
         return ResponseEntity.ok().body(deviseService.findAllDevise());
     }
-
+    
+    @GetMapping("devise/hasTaux")
+    public ResponseEntity<List<DeviseDTO>> getAllDeviseByTaux() {        
+        return ResponseEntity.ok().body(deviseService.findByHasTaux(false));
+    }
+    
     @PostMapping("devise")
     public ResponseEntity<DeviseDTO> postDevise(@Valid @RequestBody DeviseDTO ddeTransfertDTO, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
         DeviseDTO result = deviseService.save(ddeTransfertDTO);
         return ResponseEntity.created(new URI("/api/parametrage/" + result.getCode())).body(result);
     }
-
+    
     @PutMapping("devise/update")
     public ResponseEntity<Devise> updateDevise(@RequestBody @Valid DeviseDTO dto) throws URISyntaxException {
         Devise result = deviseService.update(dto);
         return ResponseEntity.ok().body(result);
     }
-
+    
     @DeleteMapping("devise/delete/{code}")
     public ResponseEntity<Devise> deleteDevise(@PathVariable("code") Integer code) {
         deviseService.deleteDevise(code);

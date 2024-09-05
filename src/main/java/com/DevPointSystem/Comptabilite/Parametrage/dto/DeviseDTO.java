@@ -24,6 +24,7 @@ public class DeviseDTO {
     private String userCreate;
  
     private Date dateCreate;
+        private boolean hasTaux;
 
     public DeviseDTO() {
     }
@@ -85,6 +86,14 @@ public class DeviseDTO {
 
     public void setCodeSaisie(String codeSaisie) {
         this.codeSaisie = codeSaisie;
+    }
+
+    public boolean isHasTaux() {
+        return hasTaux;
+    }
+
+    public void setHasTaux(boolean hasTaux) {
+        this.hasTaux = hasTaux;
     }
     
 }

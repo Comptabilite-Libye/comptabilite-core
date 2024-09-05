@@ -1,11 +1,15 @@
 package com.DevPointSystem.Comptabilite;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Locale;
+import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,10 +31,11 @@ public class ComptabiliteCoreApplication {
 //	public static void main(String[] args) {
 //		SpringApplication.run(ComptabiliteCoreApplication.class, args);
 //	}
-
+    @Autowired
+  private ObjectMapper objectMapper;
     
     private static final Logger log = LoggerFactory.getLogger(ComptabiliteCoreApplication.class);
-
+    public static String jwtSecret = "";
     public static void main(String[] args) throws UnknownHostException {
 
         SpringApplication app = new SpringApplication(ComptabiliteCoreApplication.class);
@@ -87,4 +92,9 @@ public class ComptabiliteCoreApplication {
         slr.setDefaultLocale(Locale.US);
         return slr;
     }
+    
+    @PostConstruct
+  public void setUp() {
+    objectMapper.registerModule(new JavaTimeModule());
+  }
 }

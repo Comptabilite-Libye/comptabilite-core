@@ -4,7 +4,6 @@
  */
 package com.DevPointSystem.Comptabilite.Parametrage.domaine;
 
- 
 import java.io.Serializable;
 import java.util.Date;
 import jakarta.persistence.Column;
@@ -16,7 +15,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size; 
+import jakarta.validation.constraints.Size;
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
 
 /**
  *
@@ -24,19 +25,20 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "devise", schema = "param")
-//@Audited
-//@AuditTable("devise_AUD")
+@Audited
+@AuditTable("devise_AUD")
 public class Devise implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code")
     private Integer code;
- 
+
     @Size(max = 200)
     @NotNull
     @Column(name = "code_saisie", length = 200)
     private String codeSaisie;
-    
+
     @Size(max = 200)
     @Column(name = "designation_ar", length = 200, nullable = false, columnDefinition = "nvarchar(200)")
     private String designationAr;
@@ -55,10 +57,11 @@ public class Devise implements Serializable {
     @Column(name = "date_Create", nullable = false)
     private Date dateCreate;
 
+    @Column(name = "has_taux", nullable = false, columnDefinition = "bit default 0")
+    private boolean hasTaux ;
+
     public Devise() {
     }
-
-    
 
     public Integer getCode() {
         return code;
@@ -75,8 +78,6 @@ public class Devise implements Serializable {
     public void setCodeSaisie(String codeSaisie) {
         this.codeSaisie = codeSaisie;
     }
-
- 
 
     public String getDesignationAr() {
         return designationAr;
@@ -117,4 +118,14 @@ public class Devise implements Serializable {
     public void setDateCreate(Date dateCreate) {
         this.dateCreate = dateCreate;
     }
+
+    public boolean isHasTaux() {
+        return hasTaux;
+    }
+
+    public void setHasTaux(boolean hasTaux) {
+        this.hasTaux = hasTaux;
+    }
+    
+    
 }

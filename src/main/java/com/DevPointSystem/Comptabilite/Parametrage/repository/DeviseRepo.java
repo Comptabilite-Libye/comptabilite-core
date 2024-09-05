@@ -5,6 +5,7 @@
 package com.DevPointSystem.Comptabilite.Parametrage.repository;
 
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.Devise;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Repository;
  * @author Administrator
  */
 @Repository
-public interface DeviseRepo extends JpaRepository<Devise, Integer>{
-    
+public interface DeviseRepo extends JpaRepository<Devise, Integer> {
+
+    List<Devise> findByHasTaux(boolean hasTaux);
+
 }

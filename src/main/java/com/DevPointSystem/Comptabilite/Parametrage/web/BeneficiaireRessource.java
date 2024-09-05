@@ -31,7 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/parametrage/")
 public class BeneficiaireRessource {
-  private final BeneficiaireService beneficiaireService;
+
+    private final BeneficiaireService beneficiaireService;
 
     public BeneficiaireRessource(BeneficiaireService beneficiaireService) {
         this.beneficiaireService = beneficiaireService;

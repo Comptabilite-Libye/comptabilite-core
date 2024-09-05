@@ -15,6 +15,8 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.Date;
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
 
 /**
  *
@@ -22,6 +24,8 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "type_recette", schema = "param")
+@Audited
+@AuditTable("type_recette_AUD")
 public class TypeRecette {
      @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

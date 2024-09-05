@@ -12,6 +12,8 @@ import com.DevPointSystem.Comptabilite.Authentification.domaine.User;
 import com.DevPointSystem.Comptabilite.Authentification.dto.LoginUserDto;
 import com.DevPointSystem.Comptabilite.Authentification.dto.RegisterUserDto;
 import com.DevPointSystem.Comptabilite.Authentification.repository.UserRepository;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,16 +21,17 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthenticationService {
+
     private final UserRepository userRepository;
-    
+
     private final PasswordEncoder passwordEncoder;
-    
+
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationService(
-        UserRepository userRepository,
-        AuthenticationManager authenticationManager,
-        PasswordEncoder passwordEncoder
+            UserRepository userRepository,
+            AuthenticationManager authenticationManager,
+            PasswordEncoder passwordEncoder
     ) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
@@ -37,7 +40,7 @@ public class AuthenticationService {
 
     public User signup(RegisterUserDto input) {
         User user = new User()
-                .setFullName(input.getFullName())   
+                .setFullName(input.getFullName())
                 .setUserName(input.getUserName())
                 .setEmail(input.getEmail())
                 .setPassword(passwordEncoder.encode(input.getPassword()));
@@ -53,7 +56,15 @@ public class AuthenticationService {
                 )
         );
 
-        return userRepository.findUserByUserName(input.getUserName())
+        return userRepository.findByUserName(input.getUserName())
                 .orElseThrow();
     }
+
+    public List<User> findone(String user, String passwd) {
+        List<User> accesscont = userRepository.findByUserNameAndPassword(user, passwd);
+        return accesscont;
+    }
+
+ 
+
 }

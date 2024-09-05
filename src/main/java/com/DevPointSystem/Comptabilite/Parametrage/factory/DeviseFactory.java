@@ -25,9 +25,8 @@ public class DeviseFactory {
     public static Devise deviseDTOToDevise(DeviseDTO dto, Devise domaine) {
         if (dto != null) {
             domaine.setCode(dto.getCode());       
-            domaine.setCodeSaisie(dto.getCodeSaisie());
-
-
+            domaine.setCodeSaisie(dto.getCodeSaisie());   
+            domaine.setHasTaux(dto.isHasTaux()); 
             domaine.setDesignationLt(dto.getDesignationLt());
             domaine.setDesignationAr(dto.getDesignationAr());
             domaine.setActif(dto.isActif());
@@ -39,15 +38,25 @@ public class DeviseFactory {
             return null;
         }
     }
+    
+    
+     public static Devise deviseDTOToDeviseHasTaux(DeviseDTO dto, Devise domaine) {
+        if (dto != null) {
+            domaine.setCode(dto.getCode());        
+            domaine.setHasTaux(dto.isHasTaux());    
+            return domaine;
+        } else {
+            return null;
+        }
+    }
 
     public static DeviseDTO deviseToDeviseDTO(Devise domaine) {
 
         if (domaine != null) {
             DeviseDTO dto = new DeviseDTO();
             dto.setCode(domaine.getCode());    
-            dto.setCodeSaisie(domaine.getCodeSaisie());
-
-
+            dto.setCodeSaisie(domaine.getCodeSaisie()); 
+            dto.setHasTaux(domaine.isHasTaux()); 
             dto.setDesignationAr(domaine.getDesignationAr());
             dto.setDesignationLt(domaine.getDesignationLt()); 
             dto.setActif(domaine.isActif());
@@ -59,7 +68,8 @@ public class DeviseFactory {
             return null;
         }
     }
-
+    
+    
     public static List<DeviseDTO> listDeviseToDeviseDTOs(List<Devise> devises) {
         List<DeviseDTO> list = new ArrayList<>();
         for (Devise devise : devises) {
