@@ -9,6 +9,8 @@ import com.DevPointSystem.Comptabilite.Parametrage.factory.DeviseFactory;
 import com.DevPointSystem.Comptabilite.Parametrage.factory.ModeReglementFactory;
 import com.DevPointSystem.Comptabilite.Recette.domaine.MouvementCaisse;
 import com.DevPointSystem.Comptabilite.Recette.dto.MouvementCaisseDTO;
+import com.DevPointSystem.Comptabilite.Recette.dto.SoldeCaisseDTO;
+import com.DevPointSystem.Comptabilite.Recette.repository.MouvementCaisseRepo;
 import com.DevPointSystem.Comptabilite.web.Util.Preconditions;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +23,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MouvementCaisseFactory {
+
+    private final MouvementCaisseRepo mouvementCaisseRepo;
+
+    public MouvementCaisseFactory(MouvementCaisseRepo mouvementCaisseRepo) {
+        this.mouvementCaisseRepo = mouvementCaisseRepo;
+    }
 
     public static MouvementCaisse createMouvementCaisseByCode(int code) {
         MouvementCaisse domaine = new MouvementCaisse();
@@ -36,12 +44,10 @@ public class MouvementCaisseFactory {
             domaine.setDebit(dto.getDebit());
             domaine.setCredit(dto.getCredit());
 
-            domaine.setDateCreate(dto.getDateCreate()); 
-            domaine.setUserCreate(dto.getUserCreate());  
-            domaine.setMntDevise(dto.getMntDevise());   
+            domaine.setDateCreate(dto.getDateCreate());
+            domaine.setUserCreate(dto.getUserCreate());
+            domaine.setMntDevise(dto.getMntDevise());
             domaine.setCodeTier(dto.getCodeTier());
-
-
 
             Preconditions.checkBusinessLogique(dto.getCodeCaisse() != null, "error.CaisseRequired");
             domaine.setCodeCaisse(dto.getCodeCaisse());
@@ -51,13 +57,13 @@ public class MouvementCaisseFactory {
             }
 
             domaine.setCodeCaisseTr(dto.getCodeCaisseTr());
-          
+
             domaine.setCodeDevise(dto.getCodeDevise());
             if (domaine.getCodeDevise() != null) {
                 domaine.setDevise(DeviseFactory.createDeviseByCode(dto.getCodeDevise()));
 
             }
-            
+
             domaine.setCodeModeReglement(dto.getCodeModeReglement());
             if (domaine.getCodeModeReglement() != null) {
                 domaine.setModeReglement(ModeReglementFactory.createModeReglementByCode(dto.getCodeModeReglement()));
@@ -76,7 +82,7 @@ public class MouvementCaisseFactory {
             MouvementCaisseDTO dto = new MouvementCaisseDTO();
             dto.setCode(domaine.getCode());
             dto.setCredit(domaine.getCredit());
-            dto.setDebit(domaine.getDebit());    
+            dto.setDebit(domaine.getDebit());
             dto.setMntDevise(domaine.getMntDevise());
 
             dto.setCodeSaisie(domaine.getCodeSaisie());
@@ -85,12 +91,12 @@ public class MouvementCaisseFactory {
 
             dto.setCaisseDTO(CaisseFactory.caisseToCaisseDTO(domaine.getCaisse()));
             dto.setCodeCaisse(domaine.getCodeCaisse());
- 
+
             dto.setCodeCaisseTr(domaine.getCodeCaisseTr());
 
-             dto.setModeReglementDTO(ModeReglementFactory.modeReglementToModeReglementDTO(domaine.getModeReglement()));
+            dto.setModeReglementDTO(ModeReglementFactory.modeReglementToModeReglementDTO(domaine.getModeReglement()));
             dto.setCodeModeReglement(domaine.getCodeModeReglement());
-            
+
             dto.setDeviseDTO(DeviseFactory.deviseToDeviseDTO(domaine.getDevise()));
             dto.setCodeDevise(domaine.getCodeDevise());
 
@@ -116,4 +122,14 @@ public class MouvementCaisseFactory {
         return dTOs;
 
     }
+
+//    public static List<MouvementCaisse> listMouvementCaisseToMouvementCaisseDTOsGrouped(List<SoldeCaisseDTO> mouvementCaisses) {
+//        List<SoldeCaisseDTO> list = new ArrayList<>();
+//        for (SoldeCaisseDTO mouvementCaisse : mouvementCaisses) {
+//            list.add(mouvementCaisseToMouvementCaisseDTOGrouped(mouvementCaisse));
+//        }
+//        return list;
+//    }
+
+   
 }

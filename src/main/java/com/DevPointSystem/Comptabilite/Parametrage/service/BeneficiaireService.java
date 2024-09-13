@@ -35,8 +35,8 @@ public class BeneficiaireService {
 
     @Transactional(readOnly = true)
     public BeneficiaireDTO findOne(Integer code) {
-        Beneficiaire domaine = beneficiaireRepo.getReferenceById(code);
-        Preconditions.checkArgument(domaine.getCode() != null, "error.BeneficiaireNotFound");
+        Beneficiaire domaine = beneficiaireRepo.findByCode(code);
+        Preconditions.checkArgument(domaine != null, "error.BeneficiaireNotFound");
         return BeneficiaireFactory.beneficiaireToBeneficiaireDTO(domaine);
     }
 
@@ -47,10 +47,9 @@ public class BeneficiaireService {
         return BeneficiaireFactory.beneficiaireToBeneficiaireDTO(domaine);
     }
 
-    public Beneficiaire update(BeneficiaireDTO dto) {
-        Preconditions.checkArgument((dto.getCode() != null), "error.BeneficiaireNotFound");
-        Beneficiaire domaine = beneficiaireRepo.getReferenceById(dto.getCode());
-        Preconditions.checkArgument(true, "error.BeneficiaireNotFound");
+    public Beneficiaire update(BeneficiaireDTO dto) { 
+        Beneficiaire domaine = beneficiaireRepo.findByCode(dto.getCode());
+        Preconditions.checkArgument(domaine != null, "error.BeneficiaireNotFound");
         dto.setCode(domaine.getCode());
         BeneficiaireFactory.beneficiaireDTOToBeneficiaire(dto, domaine);
         return beneficiaireRepo.save(domaine);

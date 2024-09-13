@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
  * @author Administrator
  */
 @Repository
-public interface TauxDeChangeRepo  extends JpaRepository<TauxDeChange, Integer>{
-     
+public interface TauxDeChangeRepo extends JpaRepository<TauxDeChange, Integer> {
+
+    TauxDeChange findByCodeDevise(Integer codeDevise);
+
 }

@@ -35,7 +35,7 @@ public class SocieteService {
   
     @Transactional(readOnly = true)
     public SocieteDTO findOne(Integer id) {
-        Societe societe = societeRepo.getReferenceById(id);
+        Societe societe = societeRepo.findByCode(id);
         RestPreconditions.checkFound(societe, "societe.NotFound");
         SocieteDTO dto = SocieteFactory.societeToSocieteDTO(societe, false);
         return dto;
@@ -43,7 +43,7 @@ public class SocieteService {
 
     @Transactional(readOnly = true)
     public Societe findSociete(Integer id) {
-        Societe societe = societeRepo.getReferenceById(id);
+        Societe societe = societeRepo.findByCode(id);
         RestPreconditions.checkFound(societe, "societe.NotFound");
         return societe;
     }
@@ -68,7 +68,7 @@ public class SocieteService {
             readOnly = true
     )
     public SocieteDTO findOne(Integer id, Boolean withoutLogo) {
-        Societe societe = societeRepo.getReferenceById(id);
+        Societe societe = societeRepo.findByCode(id);
         RestPreconditions.checkFound(societe, "societe.NotFound");
         SocieteDTO dto = SocieteFactory.societeToSocieteDTO(societe, withoutLogo);
         return dto;
@@ -85,7 +85,7 @@ public class SocieteService {
     }
 
     public SocieteDTO update(SocieteDTO dTO) throws IOException {
-        Societe inBase = societeRepo.getReferenceById(dTO.getCode());
+        Societe inBase = societeRepo.findByCode(dTO.getCode());
         Preconditions.checkArgument(inBase != null, "Societe does not exist");
         SocieteDTO result = save(dTO);
         return result;

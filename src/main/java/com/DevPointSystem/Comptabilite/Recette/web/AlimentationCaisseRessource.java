@@ -4,12 +4,15 @@
  */
 package com.DevPointSystem.Comptabilite.Recette.web;
 
+import com.DevPointSystem.Comptabilite.Authentification.dto.AccessUserDTO;
+import com.DevPointSystem.Comptabilite.Authentification.service.AccessUserService;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.SocieteDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.paramDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.service.ParamService;
 import com.DevPointSystem.Comptabilite.Parametrage.service.SocieteService;
 import com.DevPointSystem.Comptabilite.Recette.domaine.AlimentationCaisse;
 import com.DevPointSystem.Comptabilite.Recette.dto.AlimentationCaisseDTO;
+import com.DevPointSystem.Comptabilite.Recette.dto.DetailsAlimentationCaisseDTO;
 import com.DevPointSystem.Comptabilite.Recette.service.AlimentationCaisseService;
 import jakarta.validation.Valid;
 import java.io.ByteArrayOutputStream;
@@ -24,7 +27,7 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.export.SimpleExporterInput;
@@ -47,6 +50,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import net.sf.jasperreports.engine.design.JRDesignBand;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import static org.springframework.data.redis.serializer.RedisSerializationContext.java;
 
 /**
  *
@@ -60,10 +66,13 @@ public class AlimentationCaisseRessource {
     private final ParamService paramService;
     private final SocieteService societeService;
 
-    public AlimentationCaisseRessource(AlimentationCaisseService alimentationCaisseService, ParamService paramService, SocieteService societeService) {
+    private final AccessUserService accessUserService;
+
+    public AlimentationCaisseRessource(AlimentationCaisseService alimentationCaisseService, ParamService paramService, SocieteService societeService, AccessUserService accessUserService) {
         this.alimentationCaisseService = alimentationCaisseService;
         this.paramService = paramService;
         this.societeService = societeService;
+        this.accessUserService = accessUserService;
     }
 
     @GetMapping("alimentation_caisse/{code}")
@@ -89,15 +98,39 @@ public class AlimentationCaisseRessource {
         return ResponseEntity.ok().body(dTOs);
     }
 
+    @GetMapping("alimentation_caisse/EtatApprouver/{codeEtatApprouver}")
+    public ResponseEntity<List<AlimentationCaisseDTO>> getAppelOffreByCodeEtatApprouve(@PathVariable Integer codeEtatApprouver) {
+        List<AlimentationCaisseDTO> dto = alimentationCaisseService.findByEtatApprouver(codeEtatApprouver);
+        return ResponseEntity.ok().body(dto);
+
+    }
+
     @PostMapping("alimentation_caisse")
     public ResponseEntity<AlimentationCaisseDTO> postAlimentationCaisse(@Valid @RequestBody AlimentationCaisseDTO dTO, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
         AlimentationCaisseDTO result = alimentationCaisseService.save(dTO);
         return ResponseEntity.created(new URI("/api/parametrage/" + result.getCode())).body(result);
     }
 
+//    @PutMapping("alimentation_caisse/update")
+//    public ResponseEntity<AlimentationCaisseDTO> updateAlimentationCaisse(@Valid @RequestBody AlimentationCaisseDTO dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
+//        AlimentationCaisseDTO result = alimentationCaisseService.update(dto);
+//        return ResponseEntity.ok().body(result);
+//    }
     @PutMapping("alimentation_caisse/update")
-    public ResponseEntity<AlimentationCaisse> updateAlimentationCaisse(@RequestBody @Valid AlimentationCaisseDTO dTO) throws URISyntaxException {
-        AlimentationCaisse result = alimentationCaisseService.update(dTO);
+    public ResponseEntity<AlimentationCaisseDTO> updateAlimentationCaisse(@Valid @RequestBody AlimentationCaisseDTO dTO, BindingResult bindingResult) throws MethodArgumentNotValidException {
+        AlimentationCaisseDTO result = alimentationCaisseService.updateNewWithFlush(dTO);
+        return ResponseEntity.ok().body(result);
+    }
+
+    @PutMapping("alimentation_caisse/approuver")
+    public ResponseEntity<AlimentationCaisseDTO> approuveDemandeAchat(@Valid @RequestBody AlimentationCaisseDTO dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
+        AlimentationCaisseDTO result = alimentationCaisseService.approuveAC(dto);
+        return ResponseEntity.ok().body(result);
+    }
+
+    @PutMapping("alimentation_caisse/cancel_approuver")
+    public ResponseEntity<AlimentationCaisseDTO> Cancel_approuveDemandeAchat(@Valid @RequestBody AlimentationCaisseDTO dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
+        AlimentationCaisseDTO result = alimentationCaisseService.CancelapprouveAC(dto);
         return ResponseEntity.ok().body(result);
     }
 
@@ -110,25 +143,38 @@ public class AlimentationCaisseRessource {
     @GetMapping("alimentation_caisse/edition/{code}")
     public ResponseEntity<byte[]> getReport(@PathVariable Integer code) throws Exception {
 
+        Collection<DetailsAlimentationCaisseDTO> dto = alimentationCaisseService.findOneWithDetails(code);
+
         String fileNameJrxml = "src/main/resources/Reports/AlimentCaisse.jrxml";
         paramDTO dTOs = paramService.findParamByCodeParamS("NomSociete");
         AlimentationCaisseDTO rslt = alimentationCaisseService.findOne(code);
+
+        AccessUserDTO getsignature = accessUserService.findOneByCode(rslt.getCodeUserApprouver());
+
         SocieteDTO societeDTO = societeService.findOne(1);
         JasperDesign jasperDesign = JRXmlLoader.load(fileNameJrxml);
         JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
         Map<String, Object> params = new HashMap<>();
+        params.put("ItemDataSource", new JRBeanCollectionDataSource(dto));
         params.put("UserCreate", auth.getName());
         params.put("CodeSaisie", rslt.getCodeSaisie());
         params.put("societe", dTOs.getValeur());
         params.put("devise", rslt.getDeviseDTO().getDesignationAr());
-        params.put("typeRecette", rslt.getTypeRecetteDTO().getDesignationAr());
+        params.put("typeRecette", rslt.getDetailsAlimentationCaisseDTOs().iterator().next().getDesignationArTypeRecette());
         params.put("caisse", rslt.getCaisseDTO().getDesignationAr());
         params.put("modeReglement", rslt.getModeReglementDTO().getDesignationAr());
         params.put("montant", rslt.getMontant());
+        params.put("montantEnDevise", rslt.getMontantEnDevise());
+        params.put("tauxChange", rslt.getTauxChange());
         params.put("observation", rslt.getObservation());
         params.put("dateCreate", rslt.getDateCreate());
+        params.put("designationEtatApprouve", rslt.getEtatApprouverDTO().getDesignation());
+
         params.put("logo", societeDTO.getLogo());
+        params.put("signature", getsignature.getSignature());
+
         JasperPrint print = JasperFillManager.fillReport(jasperReport, params, new JREmptyDataSource());
         JRPdfExporter exporter = new JRPdfExporter();
         ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();

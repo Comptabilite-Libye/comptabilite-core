@@ -43,6 +43,13 @@ public class TauxDeChangeService {
         Preconditions.checkArgument(domaine.getCode() != null, "error.TauxDeChangeNotFound");
         return TauxDeChangeFactory.tauxDeChangeToTauxDeChangeDTO(domaine);
     }
+    
+        @Transactional(readOnly = true)
+    public TauxDeChangeDTO findOneByCodeDevise(Integer codeDevise) {
+        TauxDeChange domaine = tauxDeChangeRepo.findByCodeDevise(codeDevise);
+        Preconditions.checkArgument(domaine.getCode() != null, "error.TauxDeChangeNotFound");
+        return TauxDeChangeFactory.tauxDeChangeToTauxDeChangeDTO(domaine);
+    }
 
 //
     public TauxDeChangeDTO save(TauxDeChangeDTO dto) {

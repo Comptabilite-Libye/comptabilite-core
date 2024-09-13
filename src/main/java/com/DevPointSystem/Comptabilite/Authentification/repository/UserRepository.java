@@ -13,15 +13,16 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.ListCrudRepository;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
 public interface UserRepository extends ListCrudRepository<User, Integer> {
 
-    Optional<User> findByUserName(String userName);   
-    
-//    User findUserByUserName(String userName);
-
-
+    Optional<User> findByUserName(String userName);
+ 
     List<User> findByUserNameAndPassword(String userName, String password);
+
+ 
+
 
 }

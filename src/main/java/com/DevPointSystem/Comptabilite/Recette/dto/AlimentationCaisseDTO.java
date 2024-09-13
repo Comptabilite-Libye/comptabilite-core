@@ -7,10 +7,12 @@ package com.DevPointSystem.Comptabilite.Recette.dto;
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.ModeReglement;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.CaisseDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.DeviseDTO;
+import com.DevPointSystem.Comptabilite.Parametrage.dto.EtatApprouverDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.ModeReglementDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.TypeRecetteDTO;
 import jakarta.persistence.Column;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -37,14 +39,23 @@ public class AlimentationCaisseDTO {
 
     private Date dateCreate;
 
-    private TypeRecetteDTO typeRecetteDTO;
-
-    private Integer codeTypeRecette;
-    private BigDecimal montant;
-
     private ModeReglementDTO modeReglementDTO;
 
     private Integer codeModeReglement;
+
+    private EtatApprouverDTO etatApprouverDTO;
+    private Integer codeEtatApprouver;
+    private Integer codeUserApprouver;
+    private Date dateApprouve;
+    private Integer designationEtatApprouve;
+
+    private Collection<DetailsAlimentationCaisseDTO> detailsAlimentationCaisseDTOs;
+
+    private BigDecimal montant;
+    private BigDecimal montantEnDevise;
+    private BigDecimal tauxChange;
+    
+    
 
     public AlimentationCaisseDTO() {
     }
@@ -121,30 +132,6 @@ public class AlimentationCaisseDTO {
         this.dateCreate = dateCreate;
     }
 
-    public TypeRecetteDTO getTypeRecetteDTO() {
-        return typeRecetteDTO;
-    }
-
-    public void setTypeRecetteDTO(TypeRecetteDTO typeRecetteDTO) {
-        this.typeRecetteDTO = typeRecetteDTO;
-    }
-
-    public Integer getCodeTypeRecette() {
-        return codeTypeRecette;
-    }
-
-    public void setCodeTypeRecette(Integer codeTypeRecette) {
-        this.codeTypeRecette = codeTypeRecette;
-    }
-
-    public BigDecimal getMontant() {
-        return montant;
-    }
-
-    public void setMontant(BigDecimal montant) {
-        this.montant = montant;
-    }
-
     public ModeReglementDTO getModeReglementDTO() {
         return modeReglementDTO;
     }
@@ -159,6 +146,78 @@ public class AlimentationCaisseDTO {
 
     public void setCodeModeReglement(Integer codeModeReglement) {
         this.codeModeReglement = codeModeReglement;
+    }
+
+    public EtatApprouverDTO getEtatApprouverDTO() {
+        return etatApprouverDTO;
+    }
+
+    public void setEtatApprouverDTO(EtatApprouverDTO etatApprouverDTO) {
+        this.etatApprouverDTO = etatApprouverDTO;
+    }
+
+    public Integer getCodeEtatApprouver() {
+        return codeEtatApprouver;
+    }
+
+    public void setCodeEtatApprouver(Integer codeEtatApprouver) {
+        this.codeEtatApprouver = codeEtatApprouver;
+    }
+
+    public Integer getCodeUserApprouver() {
+        return codeUserApprouver;
+    }
+
+    public void setCodeUserApprouver(Integer codeUserApprouver) {
+        this.codeUserApprouver = codeUserApprouver;
+    }
+
+    public Date getDateApprouve() {
+        return dateApprouve;
+    }
+
+    public void setDateApprouve(Date dateApprouve) {
+        this.dateApprouve = dateApprouve;
+    }
+
+    public Collection<DetailsAlimentationCaisseDTO> getDetailsAlimentationCaisseDTOs() {
+        return detailsAlimentationCaisseDTOs;
+    }
+
+    public void setDetailsAlimentationCaisseDTOs(Collection<DetailsAlimentationCaisseDTO> detailsAlimentationCaisseDTOs) {
+        this.detailsAlimentationCaisseDTOs = detailsAlimentationCaisseDTOs;
+    }
+
+    public BigDecimal getMontant() {
+        return montant;
+    }
+
+    public void setMontant(BigDecimal montant) {
+        this.montant = montant;
+    }
+
+    public BigDecimal getMontantEnDevise() {
+        return montantEnDevise;
+    }
+
+    public void setMontantEnDevise(BigDecimal montantEnDevise) {
+        this.montantEnDevise = montantEnDevise;
+    }
+
+    public BigDecimal getTauxChange() {
+        return tauxChange;
+    }
+
+    public void setTauxChange(BigDecimal tauxChange) {
+        this.tauxChange = tauxChange;
+    }
+
+    public Integer getDesignationEtatApprouve() {
+        return designationEtatApprouve;
+    }
+
+    public void setDesignationEtatApprouve(Integer designationEtatApprouve) {
+        this.designationEtatApprouve = designationEtatApprouve;
     }
 
     

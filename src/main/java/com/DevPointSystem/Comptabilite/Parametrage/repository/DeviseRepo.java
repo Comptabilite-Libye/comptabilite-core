@@ -18,4 +18,5 @@ public interface DeviseRepo extends JpaRepository<Devise, Integer> {
 
     List<Devise> findByHasTaux(boolean hasTaux);
 
+    Devise findByCode(Integer code);
 }

@@ -18,6 +18,9 @@ public class LoginResponse {
 
     private Date expiration;
 
+  
+    
+
     public String getToken() {
         return token;
     }

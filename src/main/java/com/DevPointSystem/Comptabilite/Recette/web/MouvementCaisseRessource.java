@@ -11,8 +11,10 @@ import com.DevPointSystem.Comptabilite.Recette.service.MouvementCaisseService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,8 +23,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import javax.persistence.Query;
 
 /**
  *
@@ -52,6 +54,13 @@ public class MouvementCaisseRessource {
     public ResponseEntity<List<MouvementCaisseDTO>> getAllMouvementCaisse() {
         return ResponseEntity.ok().body(mouvementCaisseService.findAllMouvementCaisse());
     }
+    
+     @GetMapping("mouvement_caisse/allGrouped")
+    public ResponseEntity<List<MouvementCaisseDTO>> getAllMouvementCaisseGrouped() {
+        return ResponseEntity.ok().body(mouvementCaisseService.findAllMouvementCaisseGroupeed());
+    }
+    
+
 
 //    @GetMapping("mouvement_caisse/codeCaisse")
 //    public ResponseEntity<Collection<MouvementCaisseDTO>> getMouvementCaisseByCodeCaisse(@RequestParam Collection<Integer> codeCaisse) {
@@ -84,7 +93,6 @@ public class MouvementCaisseRessource {
 //        Collection<MouvementCaisseDTO> dTOs = mouvementCaisseService.findByCodeDevise(codeDevise);
 //        return ResponseEntity.ok().body(dTOs);
 //    }
-
     @PostMapping("mouvement_caisse")
     public ResponseEntity<MouvementCaisseDTO> postMouvementCaisse(@Valid @RequestBody MouvementCaisseDTO dTO, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
         MouvementCaisseDTO result = mouvementCaisseService.save(dTO);
@@ -139,4 +147,30 @@ public class MouvementCaisseRessource {
 //                .body(res);
 //
 //    }
+    public static void main(String[] args) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("your-persistence-unit-name");
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            Query query = em.createNativeQuery("select sum(debit), sum(credit), CodeCaisse  from recette.mouvement_caisse");
+            // Execute the query and get the result as an Object[] array
+            Object[] result = (Object[]) query.getSingleResult();
+            // Get the values from the result array
+            Double debitSum = (Double) result[0];
+            Double creditSum = (Double) result[1];
+            String codeCaisse = (String) result[2];
+
+            // Print the results
+            System.out.println("Sum of Debit: " + debitSum);
+            System.out.println("Sum of Credit: " + creditSum);
+            System.out.println("CodeCaisse: " + codeCaisse);
+
+        } finally {
+            em.close();
+            emf.close();
+        }
+    }
+
+     
+
 }

@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/parametrage/")
 public class TauxDeChangeRessource {
+
     private final TauxDeChangeService tauxDeChangeService;
 
     public TauxDeChangeRessource(TauxDeChangeService tauxDeChangeService) {
@@ -40,6 +41,12 @@ public class TauxDeChangeRessource {
     @GetMapping("taux_change/{code}")
     public ResponseEntity<TauxDeChangeDTO> getTauxDeChangeByCode(@PathVariable Integer code) {
         TauxDeChangeDTO dto = tauxDeChangeService.findOne(code);
+        return ResponseEntity.ok().body(dto);
+    }
+
+    @GetMapping("taux_change/code_devise/{codeDevise}")
+    public ResponseEntity<TauxDeChangeDTO> getTauxDeChangeByCodeDevise(@PathVariable Integer codeDevise) {
+        TauxDeChangeDTO dto = tauxDeChangeService.findOneByCodeDevise(codeDevise);
         return ResponseEntity.ok().body(dto);
     }
 

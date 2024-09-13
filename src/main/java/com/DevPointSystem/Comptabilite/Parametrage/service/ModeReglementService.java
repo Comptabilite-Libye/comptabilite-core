@@ -34,8 +34,8 @@ public class ModeReglementService {
 
     @Transactional(readOnly = true)
     public ModeReglementDTO findOne(Integer code) {
-        ModeReglement domaine = modeReglementRepo.getReferenceById(code);
-        Preconditions.checkArgument(domaine.getCode() != null, "error.ModeReglementNotFound");
+        ModeReglement domaine = modeReglementRepo.findByCode(code);
+        Preconditions.checkArgument(domaine  != null, "error.ModeReglementNotFound");
         return ModeReglementFactory.modeReglementToModeReglementDTO(domaine);
     }
 
@@ -46,9 +46,8 @@ public class ModeReglementService {
         return ModeReglementFactory.modeReglementToModeReglementDTO(domaine);
     }
 
-    public ModeReglement update(ModeReglementDTO dto) {
-        Preconditions.checkArgument((dto.getCode() != null), "error.ModeReglementNotFound");
-        ModeReglement domaine = modeReglementRepo.getReferenceById(dto.getCode());
+    public ModeReglement update(ModeReglementDTO dto) { 
+        ModeReglement domaine = modeReglementRepo.findByCode(dto.getCode());
         Preconditions.checkArgument(true, "error.ModeReglementNotFound");
         dto.setCode(domaine.getCode());
         ModeReglementFactory.modeReglementDTOToModeReglement(dto, domaine);

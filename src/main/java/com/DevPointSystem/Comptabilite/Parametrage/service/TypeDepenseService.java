@@ -34,8 +34,8 @@ public class TypeDepenseService {
 
     @Transactional(readOnly = true)
     public TypeDepenseDTO findOne(Integer code) {
-        TypeDepense domaine = typeDepenseRepo.getReferenceById(code);
-        Preconditions.checkArgument(domaine.getCode() != null, "error.TypeDepenseNotFound");
+        TypeDepense domaine = typeDepenseRepo.findByCode(code);
+        Preconditions.checkArgument(domaine  != null, "error.TypeDepenseNotFound");
         return TypeDepenseFactory.typeDepenseToTypeDepenseDTO(domaine);
     }
 
@@ -48,7 +48,7 @@ public class TypeDepenseService {
 
     public TypeDepense update(TypeDepenseDTO dto) {
         Preconditions.checkArgument((dto.getCode() != null), "error.TypeDepenseNotFound");
-        TypeDepense domaine = typeDepenseRepo.getReferenceById(dto.getCode());
+        TypeDepense domaine = typeDepenseRepo.findByCode(dto.getCode());
         Preconditions.checkArgument(true, "error.TypeDepenseNotFound");
         dto.setCode(domaine.getCode());
         TypeDepenseFactory.typeDepenseDTOToTypeDepense(dto, domaine);

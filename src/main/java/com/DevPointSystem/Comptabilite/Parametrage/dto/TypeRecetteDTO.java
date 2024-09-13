@@ -13,10 +13,19 @@ import java.util.Date;
 public class TypeRecetteDTO {
      private Integer code;
  
-    private String codeSaisie; 
-    private String designationAr;
+    private String codeSaisie;   
+    
+    private String codeSaisieTypeRecette; 
+
+    private String designationAr; 
+    
+    private String designationArTypeRecette;
+
  
-    private String designationLt; 
+    private String designationLt;  
+    
+    private String designationLtTypeRecette; 
+ 
     private boolean actif;
   
     private String userCreate;
@@ -81,5 +90,34 @@ public class TypeRecetteDTO {
     public void setDateCreate(Date dateCreate) {
         this.dateCreate = dateCreate;
     }
+
+   
+
+    public void setCodeSaisieTypeRecette(String codeSaisieTypeRecette) {
+        this.codeSaisieTypeRecette = codeSaisieTypeRecette;
+    }
+
+    public void setDesignationArTypeRecette(String designationArTypeRecette) {
+        this.designationArTypeRecette = designationArTypeRecette;
+    }
+
+    public void setDesignationLtTypeRecette(String designationLtTypeRecette) {
+        this.designationLtTypeRecette = designationLtTypeRecette;
+    }
+
+    public String getCodeSaisieTypeRecette() {
+        return codeSaisieTypeRecette;
+    }
+
+    public String getDesignationArTypeRecette() {
+        return designationArTypeRecette;
+    }
+
+    public String getDesignationLtTypeRecette() {
+        return designationLtTypeRecette;
+    }
+    
+    
+    
     
 }

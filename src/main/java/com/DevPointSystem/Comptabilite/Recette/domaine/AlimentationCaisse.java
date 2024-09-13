@@ -6,9 +6,10 @@ package com.DevPointSystem.Comptabilite.Recette.domaine;
 
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.Caisse;
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.Devise;
+import com.DevPointSystem.Comptabilite.Parametrage.domaine.EtatApprouver;
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.ModeReglement;
-import com.DevPointSystem.Comptabilite.Parametrage.domaine.TypeRecette;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,12 +18,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
@@ -63,14 +66,6 @@ public class AlimentationCaisse {
     @Column(name = "code_devise", updatable = false, insertable = false)
     private Integer codeDevise;
 
-    @JoinColumn(name = "code_type_recette", referencedColumnName = "Code", nullable = false)
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JsonBackReference
-    private TypeRecette typeRecette;
-
-    @Column(name = "code_type_recette", updatable = false, insertable = false)
-    private Integer codeTypeRecette;
-
     @Column(name = "user_Create", nullable = false, length = 255, columnDefinition = "nvarchar(200)")
     private String userCreate;
 
@@ -78,8 +73,6 @@ public class AlimentationCaisse {
     @Column(name = "date_Create", nullable = false)
     private Date dateCreate;
 
-    @Column(name = "montant", columnDefinition = ("decimal(18,3)"), nullable = false)
-    private BigDecimal montant;
     @Size(max = 200)
     @Column(name = "observation", length = 200, nullable = false, columnDefinition = "nvarchar(max)")
     private String observation;
@@ -91,6 +84,33 @@ public class AlimentationCaisse {
 
     @Column(name = "mode_reglement", updatable = false, insertable = false)
     private Integer codeModeReglement;
+
+    @JoinColumn(name = "etat_approuver", referencedColumnName = "code", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private EtatApprouver etatApprouver;
+
+    @Column(name = "etat_approuver", updatable = false, insertable = false)
+    private Integer codeEtatApprouver;
+
+    @Column(name = "code_user_approuver", columnDefinition = "Nvarchar(200) default ''")
+    private Integer codeUserApprouver;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "date_approuve", columnDefinition = "datetime default(getdate())")
+    private Date dateApprouve;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "alimentationCaisse")
+    private Collection<DetailsAlimentationCaisse> detailsAlimentationCaisses;
+
+    @Column(name = "montant", columnDefinition = ("decimal(18,3)"), nullable = false)
+    private BigDecimal montant;
+
+    @Column(name = "montant_en_devise_principal", columnDefinition = ("decimal(18,3)"), nullable = false)
+    private BigDecimal montantEnDevise;
+
+    @Column(name = "taux_de_change", columnDefinition = ("decimal(18,3)"))
+    private BigDecimal tauxChange;
 
     public AlimentationCaisse() {
     }
@@ -167,30 +187,6 @@ public class AlimentationCaisse {
         this.dateCreate = dateCreate;
     }
 
-    public TypeRecette getTypeRecette() {
-        return typeRecette;
-    }
-
-    public void setTypeRecette(TypeRecette typeRecette) {
-        this.typeRecette = typeRecette;
-    }
-
-    public Integer getCodeTypeRecette() {
-        return codeTypeRecette;
-    }
-
-    public void setCodeTypeRecette(Integer codeTypeRecette) {
-        this.codeTypeRecette = codeTypeRecette;
-    }
-
-    public BigDecimal getMontant() {
-        return montant;
-    }
-
-    public void setMontant(BigDecimal montant) {
-        this.montant = montant;
-    }
-
     public ModeReglement getModeReglement() {
         return modeReglement;
     }
@@ -206,7 +202,70 @@ public class AlimentationCaisse {
     public void setCodeModeReglement(Integer codeModeReglement) {
         this.codeModeReglement = codeModeReglement;
     }
-    
+
+    public EtatApprouver getEtatApprouver() {
+        return etatApprouver;
+    }
+
+    public void setEtatApprouver(EtatApprouver etatApprouver) {
+        this.etatApprouver = etatApprouver;
+    }
+
+    public Integer getCodeEtatApprouver() {
+        return codeEtatApprouver;
+    }
+
+    public void setCodeEtatApprouver(Integer codeEtatApprouver) {
+        this.codeEtatApprouver = codeEtatApprouver;
+    }
+
+    public Integer getCodeUserApprouver() {
+        return codeUserApprouver;
+    }
+
+    public void setCodeUserApprouver(Integer codeUserApprouver) {
+        this.codeUserApprouver = codeUserApprouver;
+    }
+
+    public Date getDateApprouve() {
+        return dateApprouve;
+    }
+
+    public void setDateApprouve(Date dateApprouve) {
+        this.dateApprouve = dateApprouve;
+    }
+
+    public Collection<DetailsAlimentationCaisse> getDetailsAlimentationCaisses() {
+        return detailsAlimentationCaisses;
+    }
+
+    public void setDetailsAlimentationCaisses(Collection<DetailsAlimentationCaisse> detailsAlimentationCaisses) {
+        this.detailsAlimentationCaisses = detailsAlimentationCaisses;
+    }
+
+    public BigDecimal getMontant() {
+        return montant;
+    }
+
+    public void setMontant(BigDecimal montant) {
+        this.montant = montant;
+    }
+
+    public BigDecimal getMontantEnDevise() {
+        return montantEnDevise;
+    }
+
+    public void setMontantEnDevise(BigDecimal montantEnDevise) {
+        this.montantEnDevise = montantEnDevise;
+    }
+
+    public BigDecimal getTauxChange() {
+        return tauxChange;
+    }
+
+    public void setTauxChange(BigDecimal tauxChange) {
+        this.tauxChange = tauxChange;
+    }
     
 
 }

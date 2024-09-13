@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
  * @author Administrator
  */
 @Repository
-public interface ModeReglementRepo extends JpaRepository<ModeReglement, Integer>{
-    
+public interface ModeReglementRepo extends JpaRepository<ModeReglement, Integer> {
+
+    ModeReglement findByCode(Integer code);
 }

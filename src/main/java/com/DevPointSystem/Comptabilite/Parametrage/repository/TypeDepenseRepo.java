@@ -14,5 +14,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface TypeDepenseRepo  extends JpaRepository<TypeDepense, Integer>{
-    
+      TypeDepense findByCode(Integer code);
 }

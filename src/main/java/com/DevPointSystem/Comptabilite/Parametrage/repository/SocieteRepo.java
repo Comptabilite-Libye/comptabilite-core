@@ -16,4 +16,6 @@ import org.springframework.stereotype.Repository;
 public interface SocieteRepo extends JpaRepository<Societe, Integer> {
 
     Societe findFirstBy(); 
+        Societe findByCode(Integer code);
+    
 }

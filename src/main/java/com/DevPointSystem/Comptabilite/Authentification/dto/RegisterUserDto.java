@@ -16,6 +16,7 @@ public class RegisterUserDto {
     private String fullName;  
     
     private String userName;
+        private String passwordDecry;
 
 
     public RegisterUserDto() {
@@ -52,6 +53,14 @@ public class RegisterUserDto {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getPasswordDecry() {
+        return passwordDecry;
+    }
+
+    public void setPasswordDecry(String passwordDecry) {
+        this.passwordDecry = passwordDecry;
     }
     
     

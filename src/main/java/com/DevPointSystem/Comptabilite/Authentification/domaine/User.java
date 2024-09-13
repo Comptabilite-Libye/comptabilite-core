@@ -13,26 +13,30 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
 
 @Table(name = "users", schema = "access")
 @Entity
+@Audited
+@AuditTable("users_AUD")
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Integer id;
 
     @Column(nullable = false)
     private String fullName;
 
-    @Column(nullable = false, name = "user_name", columnDefinition = "varchar(200)")
+    @Column(unique = true, nullable = false, name = "user_name", columnDefinition = "varchar(200)")
     private String userName;
 
-    @Column(unique = true, length = 100, nullable = false)
+    @Column(length = 100)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "pass_cry")
     private String password;
 
     @CreationTimestamp
@@ -42,6 +46,13 @@ public class User implements UserDetails {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    @Lob
+    @Column(name = "signature",columnDefinition = ("varbinary(MAX)"))
+    private byte[] signature;
+
+    @Column(nullable = false, name = "password")
+    private String passwordDecry;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -56,8 +67,6 @@ public class User implements UserDetails {
     public String getUsername() {
         return userName;
     }
-
-   
 
     @Override
     public boolean isAccountNonExpired() {
@@ -144,15 +153,27 @@ public class User implements UserDetails {
 
     @Override
     public String toString() {
-        return "User{"
-                + "id=" + id
-                + ", fullName='" + fullName + '\''
-                + ", userName='" + userName + '\''
-                + ", email='" + email + '\''
-                + ", password='" + password + '\''
-                + ", createdAt=" + createdAt
-                + ", updatedAt=" + updatedAt
-                + '}';
+        return "User{" + "id=" + id + ", fullName=" + fullName + ", userName=" + userName + ", email=" + email + ", password=" + password + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", signature=" + signature + ", passwordDecry=" + passwordDecry + '}';
     }
+
+  
+
+    public byte[] getSignature() {
+        return signature;
+    }
+
+    public void setSignature(byte[] signature) {
+        this.signature = signature;
+    }
+
+    public String getPasswordDecry() {
+        return passwordDecry;
+    }
+
+    public void setPasswordDecry(String passwordDecry) {
+        this.passwordDecry = passwordDecry;
+    }
+    
+    
 
 }

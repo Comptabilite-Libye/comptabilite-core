@@ -49,6 +49,17 @@ public class MouvementCaisseDTO {
 
     public MouvementCaisseDTO() {
     }
+    
+   
+
+    
+ public MouvementCaisseDTO(Integer codeCaisse, BigDecimal debit, BigDecimal credit ) {
+        this.codeCaisse = codeCaisse;
+        this.debit = debit;
+        this.credit = credit;
+    }
+    
+    
 
     public Integer getCode() {
         return code;
@@ -170,6 +181,10 @@ public class MouvementCaisseDTO {
     public void setCodeModeReglement(Integer codeModeReglement) {
         this.codeModeReglement = codeModeReglement;
     }
+
+   
+    
+    
 
     
 }

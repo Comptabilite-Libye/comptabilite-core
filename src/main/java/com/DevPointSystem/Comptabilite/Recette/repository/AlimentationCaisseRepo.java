@@ -20,7 +20,7 @@ public interface AlimentationCaisseRepo extends JpaRepository<AlimentationCaisse
     List<AlimentationCaisse> findByCodeCaisseIn(Collection<Integer> codeCaisse);
 
     List<AlimentationCaisse> findByCodeDeviseIn(Collection<Integer> codeDevise);
-    
 
+    List<AlimentationCaisse> findAlimentationCaisseByCodeEtatApprouver(Integer codeEtatApprouver);
 
 }

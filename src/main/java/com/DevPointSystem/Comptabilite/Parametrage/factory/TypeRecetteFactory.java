@@ -28,7 +28,8 @@ public class TypeRecetteFactory {
 
             domaine.setDesignationLt(dto.getDesignationLt());
             domaine.setDesignationAr(dto.getDesignationAr());        
-            domaine.setCodeSaisie(dto.getCodeSaisie());
+            domaine.setCodeSaisie(dto.getCodeSaisie());   
+
 
             domaine.setActif(dto.isActif());
             domaine.setDateCreate(dto.getDateCreate());
@@ -49,7 +50,12 @@ public class TypeRecetteFactory {
             dto.setDesignationAr(domaine.getDesignationAr());
             dto.setDesignationLt(domaine.getDesignationLt());
 
-            dto.setCodeSaisie(domaine.getCodeSaisie());
+            dto.setCodeSaisie(domaine.getCodeSaisie());  
+            dto.setCodeSaisieTypeRecette(domaine.getCodeSaisie());  
+            dto.setDesignationArTypeRecette(domaine.getDesignationAr());      
+            dto.setDesignationLtTypeRecette(domaine.getDesignationLt());
+
+
             dto.setActif(domaine.isActif());
             dto.setDateCreate(domaine.getDateCreate());
             dto.setUserCreate(domaine.getUserCreate());

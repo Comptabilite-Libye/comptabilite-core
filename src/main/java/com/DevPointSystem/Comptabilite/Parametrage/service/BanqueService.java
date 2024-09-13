@@ -34,8 +34,8 @@ public class BanqueService {
 
     @Transactional(readOnly = true)
     public BanqueDTO findOne(Integer code) {
-        Banque domaine = banqueRepo.getReferenceById(code);
-        Preconditions.checkArgument(domaine.getCode() != null, "error.BanqueNotFound");
+        Banque domaine = banqueRepo.findByCode(code);
+        Preconditions.checkArgument(domaine != null, "error.BanqueNotFound");
         return BanqueFactory.banqueToBanqueDTO(domaine);
     }
 
@@ -46,10 +46,9 @@ public class BanqueService {
         return BanqueFactory.banqueToBanqueDTO(domaine);
     }
 
-    public Banque update(BanqueDTO dto) {
-        Preconditions.checkArgument((dto.getCode() != null), "error.BanqueNotFound");
-        Banque domaine = banqueRepo.getReferenceById(dto.getCode());
-        Preconditions.checkArgument(true, "error.BanqueNotFound");
+    public Banque update(BanqueDTO dto) { 
+        Banque domaine = banqueRepo.findByCode(dto.getCode());
+        Preconditions.checkArgument(domaine != null, "error.BanqueNotFound");
         dto.setCode(domaine.getCode());
         BanqueFactory.banqueDTOToBanque(dto, domaine);
         return banqueRepo.save(domaine);

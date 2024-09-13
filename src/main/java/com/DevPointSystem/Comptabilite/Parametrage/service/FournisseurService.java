@@ -34,8 +34,8 @@ public class FournisseurService {
 
     @Transactional(readOnly = true)
     public FournisseurDTO findOne(Integer code) {
-        Fournisseur domaine = fournisseurRepo.getReferenceById(code);
-        Preconditions.checkArgument(domaine.getCode() != null, "error.FournisseurNotFound");
+        Fournisseur domaine = fournisseurRepo.findByCode(code);
+        Preconditions.checkArgument(domaine  != null, "error.FournisseurNotFound");
         return FournisseurFactory.fournisseurToFournisseurDTO(domaine);
     }
 
@@ -48,8 +48,8 @@ public class FournisseurService {
 
     public Fournisseur update(FournisseurDTO dto) {
         Preconditions.checkArgument((dto.getCode() != null), "error.FournisseurNotFound");
-        Fournisseur domaine = fournisseurRepo.getReferenceById(dto.getCode());
-        Preconditions.checkArgument(true, "error.FournisseurNotFound");
+        Fournisseur domaine = fournisseurRepo.findByCode(dto.getCode());
+        Preconditions.checkArgument(domaine !=null, "error.FournisseurNotFound");
         dto.setCode(domaine.getCode());
         FournisseurFactory.fournisseurDTOToFournisseur(dto, domaine);
         return fournisseurRepo.save(domaine);

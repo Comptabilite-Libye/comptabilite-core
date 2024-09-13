@@ -4,19 +4,22 @@
  */
 package com.DevPointSystem.Comptabilite.Parametrage.domaine;
 
- 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.Size; 
+import jakarta.validation.constraints.Size;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 
@@ -28,7 +31,7 @@ import org.hibernate.envers.Audited;
 @Table(name = "caisse", schema = "param")
 @Audited
 @AuditTable("caisse_AUD")
-public class Caisse  implements Serializable{
+public class Caisse implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,6 +60,22 @@ public class Caisse  implements Serializable{
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_Create", nullable = false)
     private Date dateCreate;
+
+    @JoinColumn(name = "code_devise", referencedColumnName = "Code", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private Devise devise;
+
+    @Column(name = "code_devise", updatable = false, insertable = false, nullable = false)
+    private Integer codeDevise;
+
+    @JoinColumn(name = "code_type_caisse", referencedColumnName = "Code", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private TypeCaisse typeCaisse;
+
+    @Column(name = "code_type_caisse", updatable = false, insertable = false, nullable = false)
+    private Integer codeTypeCaisse;
 
     public Caisse() {
     }
@@ -117,4 +136,37 @@ public class Caisse  implements Serializable{
         this.dateCreate = dateCreate;
     }
 
+    public Devise getDevise() {
+        return devise;
+    }
+
+    public void setDevise(Devise devise) {
+        this.devise = devise;
+    }
+
+    public Integer getCodeDevise() {
+        return codeDevise;
+    }
+
+    public void setCodeDevise(Integer codeDevise) {
+        this.codeDevise = codeDevise;
+    }
+
+    public TypeCaisse getTypeCaisse() {
+        return typeCaisse;
+    }
+
+    public void setTypeCaisse(TypeCaisse typeCaisse) {
+        this.typeCaisse = typeCaisse;
+    }
+
+    public Integer getCodeTypeCaisse() {
+        return codeTypeCaisse;
+    }
+
+    public void setCodeTypeCaisse(Integer codeTypeCaisse) {
+        this.codeTypeCaisse = codeTypeCaisse;
+    }
+
+    
 }

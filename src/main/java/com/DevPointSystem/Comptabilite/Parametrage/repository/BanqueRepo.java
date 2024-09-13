@@ -4,7 +4,7 @@
  */
 package com.DevPointSystem.Comptabilite.Parametrage.repository;
 
-import com.DevPointSystem.Comptabilite.Parametrage.domaine.Banque; 
+import com.DevPointSystem.Comptabilite.Parametrage.domaine.Banque;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
  * @author Administrator
  */
 @Repository
-public interface BanqueRepo  extends JpaRepository<Banque, Integer>{
-    
+public interface BanqueRepo extends JpaRepository<Banque, Integer> {
+
+    Banque findByCode(Integer code);
 }

@@ -34,8 +34,8 @@ public class TypeRecetteService {
 
     @Transactional(readOnly = true)
     public TypeRecetteDTO findOne(Integer code) {
-        TypeRecette domaine = typeRecetteRepo.getReferenceById(code);
-        Preconditions.checkArgument(domaine.getCode() != null, "error.TypeRecetteNotFound");
+        TypeRecette domaine = typeRecetteRepo.findByCode(code);
+        Preconditions.checkArgument(domaine  != null, "error.TypeRecetteNotFound");
         return TypeRecetteFactory.typeRecetteToTypeRecetteDTO(domaine);
     }
 
@@ -48,7 +48,7 @@ public class TypeRecetteService {
 
     public TypeRecette update(TypeRecetteDTO dto) {
         Preconditions.checkArgument((dto.getCode() != null), "error.TypeRecetteNotFound");
-        TypeRecette domaine = typeRecetteRepo.getReferenceById(dto.getCode());
+        TypeRecette domaine = typeRecetteRepo.findByCode(dto.getCode());
         Preconditions.checkArgument(true, "error.TypeRecetteNotFound");
         dto.setCode(domaine.getCode());
         TypeRecetteFactory.typeRecetteDTOToTypeRecette(dto, domaine);

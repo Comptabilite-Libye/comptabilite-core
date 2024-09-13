@@ -36,8 +36,8 @@ public class DeviseService {
     
     @Transactional(readOnly = true)
     public DeviseDTO findOne(Integer code) {
-        Devise domaine = deviseRepo.getReferenceById(code);
-        Preconditions.checkArgument(domaine.getCode() != null, "error.DeviseNotFound");
+        Devise domaine = deviseRepo.findByCode(code);
+        Preconditions.checkArgument(domaine  != null, "error.DeviseNotFound");
         return DeviseFactory.deviseToDeviseDTO(domaine);
     }
     
@@ -63,19 +63,17 @@ public class DeviseService {
         return DeviseFactory.deviseToDeviseDTO(domaine);
     }
     
-    public Devise update(DeviseDTO dto) {
-        Preconditions.checkArgument((dto.getCode() != null), "error.DeviseNotFound");
-        Devise domaine = deviseRepo.getReferenceById(dto.getCode());
-        Preconditions.checkArgument(true, "error.DeviseNotFound");
+    public Devise update(DeviseDTO dto) { 
+        Devise domaine = deviseRepo.findByCode(dto.getCode());
+        Preconditions.checkArgument(domaine !=null, "error.DeviseNotFound");
         dto.setCode(domaine.getCode());
         DeviseFactory.deviseDTOToDevise(dto, domaine);
         return deviseRepo.save(domaine);
     }
     
-      public Devise updateHasTaux(DeviseDTO dto) {
-        Preconditions.checkArgument((dto.getCode() != null), "error.DeviseNotFound");
-        Devise domaine = deviseRepo.getReferenceById(dto.getCode());
-        Preconditions.checkArgument(true, "error.DeviseNotFound");
+      public Devise updateHasTaux(DeviseDTO dto) { 
+        Devise domaine = deviseRepo.findByCode(dto.getCode());
+        Preconditions.checkArgument(domaine !=null, "error.DeviseNotFound");
         dto.setCode(domaine.getCode());
         DeviseFactory.deviseDTOToDeviseHasTaux(dto, domaine);
         return deviseRepo.save(domaine);

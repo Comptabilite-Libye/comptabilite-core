@@ -8,10 +8,12 @@ import com.DevPointSystem.Comptabilite.Parametrage.domaine.Compteur;
 import com.DevPointSystem.Comptabilite.Parametrage.service.CompteurService;
 import com.DevPointSystem.Comptabilite.Recette.domaine.MouvementCaisse;
 import com.DevPointSystem.Comptabilite.Recette.dto.MouvementCaisseDTO;
+import com.DevPointSystem.Comptabilite.Recette.dto.SoldeCaisseDTO;
 import com.DevPointSystem.Comptabilite.Recette.factory.MouvementCaisseFactory;
 import com.DevPointSystem.Comptabilite.Recette.repository.MouvementCaisseRepo;
 import com.DevPointSystem.Comptabilite.web.Util.Helper;
 import com.google.common.base.Preconditions;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,23 @@ public class MouvementCaisseService {
         return MouvementCaisseFactory.listMouvementCaisseToMouvementCaisseDTOs(mouvementCaisseRepo.findAll());
 
     }
+    
+//    @Transactional(readOnly = true)
+//    public List<MouvementCaisseDTO>findAllMouvementCaisseGroupeed() {
+//        return  MouvementCaisseFactory.listMouvementCaisseToMouvementCaisseDTOs(mouvementCaisseRepo.calculDebitAndCredit());
+//
+//    }
+    
+      @Transactional(readOnly = true)
+    public List<MouvementCaisseDTO> findAllMouvementCaisseGroupeed() {
+        
+//         List<MouvementCaisseDTO> list = mouvementCaisseRepo.calculDebitAndCredit();
+//         List<SoldeCaisseDTO> sld = new ArrayList<>();
+//         sld.iterator().next().setCodeCaisse(list.iterator().next().getCodeCaisse());
+         
+        return mouvementCaisseRepo.calculDebitAndCredit();
+    }
+
 
     @Transactional(readOnly = true)
     public MouvementCaisseDTO findOne(Integer code) {
@@ -49,11 +68,11 @@ public class MouvementCaisseService {
 
    
 
-//    @Transactional(readOnly = true)
-//    public Collection<MouvementCaisseDTO> findByCodeCaisse(Collection<Integer> codeCaisse) {
-//        Collection<MouvementCaisse> result = mouvementCaisseRepo.findMouvementCaisseByCodeCaisse(codeCaisse);
-//        return MouvementCaisseFactory.CollectionmouvementCaissesTomouvementCaissesDTOsCollection(result);
-//    }
+    @Transactional(readOnly = true)
+    public MouvementCaisseDTO findByCodeSaisie(String codeCaisse) {
+        MouvementCaisse result = mouvementCaisseRepo.findMouvementCaisseByCodeSaisie(codeCaisse);
+        return MouvementCaisseFactory.mouvementCaisseToMouvementCaisseDTO(result);
+    }
 //
 //    @Transactional(readOnly = true)
 //    public Collection<MouvementCaisseDTO> findByCodeModeReglement(Collection<Integer> codeModeReglement) {
