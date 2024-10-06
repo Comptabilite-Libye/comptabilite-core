@@ -532,7 +532,7 @@
 				</textElement>
 				<text><![CDATA[التوقيع :]]></text>
 			</staticText>
-			<image scaleImage="RealSize" isLazy="true">
+			<image scaleImage="RealSize" hAlign="Center" vAlign="Middle" isLazy="true">
 				<reportElement x="260" y="13" width="159" height="47" uuid="0689cd87-d72e-48a0-be2d-e0811f175a1d"/>
 				<imageExpression><![CDATA[$P{signature}]]></imageExpression>
 			</image>

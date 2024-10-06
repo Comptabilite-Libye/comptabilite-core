@@ -17,7 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult; 
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,14 +30,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/parametrage/")
 public class CaisseRessource {
 
-    
     private final CaisseService caisseService;
 
     public CaisseRessource(CaisseService caisseService) {
         this.caisseService = caisseService;
     }
 
-    @GetMapping("caisse/code/{code}")
+    @GetMapping("caisse/{code}")
     public ResponseEntity<CaisseDTO> getCaisseByCode(@PathVariable Integer code) {
         CaisseDTO dto = caisseService.findOne(code);
         return ResponseEntity.ok().body(dto);
@@ -52,18 +51,21 @@ public class CaisseRessource {
         return new ResponseEntity<>(caisseService.findAllCaisse(), headers, HttpStatus.OK);
     }
 
-    @GetMapping("caisse/not_in/{code}")
-    public ResponseEntity<List<Caisse>> getAllCaisseNotIn( @PathVariable("code") List<Integer> code   ) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON); 
-        return new ResponseEntity<>(caisseService.findByCodeNotIn(code), headers, HttpStatus.OK);
+//    @GetMapping("caisse/not_in{code}")
+//    public ResponseEntity<List<CaisseDTO>> getAllCaisseNotIn( @RequestParam("code") Integer code ,@RequestParam("codeDevise") Integer codeDevise   ) {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON); 
+//        return new ResponseEntity<>(caisseService.findByCodeNotInAndCodeDevise(code,codeDevise), headers, HttpStatus.OK);
+//    }
+    @GetMapping("caisse/not_in")
+    public ResponseEntity<List<Caisse>> getAllCaisseByTypeCaisse(@RequestParam("code") Integer code, @RequestParam("codeDevise") Integer codeDevise) {
+        return ResponseEntity.ok().body(caisseService.findByCodeNotInAndCodeDevise(code, codeDevise));
     }
-    
-       @GetMapping("caisse/{codeTypeCaisse}")
-    public ResponseEntity<List<Caisse>> getAllCaisseByTypeCaisse(@PathVariable("codeTypeCaisse") Integer codeTypeCaisse ) {        
+
+    @GetMapping("caisse/type_caisse/{codeTypeCaisse}")
+    public ResponseEntity<List<Caisse>> getAllCaisseByTypeCaisse(@PathVariable("codeTypeCaisse") Integer codeTypeCaisse) {
         return ResponseEntity.ok().body(caisseService.findByCodeTypeCaisse(codeTypeCaisse));
     }
-    
 
     @PostMapping("caisse")
     public ResponseEntity<CaisseDTO> postCaisse(@Valid @RequestBody CaisseDTO ddeTransfertDTO, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
@@ -78,12 +80,11 @@ public class CaisseRessource {
     }
 
     @DeleteMapping("caisse/delete/{code}")
-    public ResponseEntity<Caisse> deleteCaisse(@RequestHeader(name = "Accept-Language", required = false) final Locale locale,@PathVariable("code") Integer code) {
-        
-         log.info("Returning greetings for locale = {}", locale);
+    public ResponseEntity<Caisse> deleteCaisse(@PathVariable("code") Integer code) {
+
+//         log.info("Returning greetings for locale = {}", locale);
         caisseService.deleteCaisse(code);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
-    
+
 }

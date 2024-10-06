@@ -5,6 +5,7 @@
 package com.DevPointSystem.Comptabilite.Parametrage.repository;
 
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.Caisse;
+import com.DevPointSystem.Comptabilite.Parametrage.dto.CaisseDTO;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Repository;
 public interface CaisseRepo extends JpaRepository<Caisse, Integer> {
 
 //      List<Caisse> findByCodeNotIn(Integer[] codes);
-    List<Caisse> findByCodeNotIn(List<Integer> code);
+    List<Caisse> findByCodeNotAndCodeDevise(Integer code,Integer codeDevise);
 
     List<Caisse> findByCodeTypeCaisse(Integer codeTypeCaisse);
 

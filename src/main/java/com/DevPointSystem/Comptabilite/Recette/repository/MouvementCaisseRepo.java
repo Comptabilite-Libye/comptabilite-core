@@ -21,24 +21,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MouvementCaisseRepo extends JpaRepository<MouvementCaisse, Integer> {
 
-//    Collection<MouvementCaisse> findMouvementCaisseByCodeModeReglement(Collection<Integer> codeModeReglement);  
-//    Collection<MouvementCaisse> findMouvementCaisseByCodeDevise(Collection<Integer> codeDevise);   
-//    Collection<MouvementCaisse> findMouvementCaisseByCodeCaisse(Collection<Integer> codeCaisse);  
-//    Collection<MouvementCaisse> findMouvementCaisseByCodeTier(Collection<String> codeTier);
-    MouvementCaisse findMouvementCaisseByCodeSaisie(String codeSaisie);
 
-//    MouvementCaisse findMouvementCaisseByCodeCaisse(Integer codeCaisse);
+     List<MouvementCaisse> findAllByOrderByDateCreateDesc();
+    
+    MouvementCaisse findMouvementCaisseByCodeSaisie(String codeSaisie);   
+    
+    List<MouvementCaisse> findMouvementCaisseByCodeCaisse(Integer codeCaisse);
 
+ 
     boolean existsByCodeCaisse(Integer codeCaisse);
 
     @Modifying
     @Query("delete from MouvementCaisse det where det.codeSaisie=?1 ")
     public void deleteByCodeSaisie(String codeSaisie);
 
-    @Query("SELECT NEW com.DevPointSystem.Comptabilite.Recette.dto.MouvementCaisseDTO( det.codeCaisse , Sum(det.debit) , Sum(det.credit) ) "
-            + " FROM MouvementCaisse det "
-            + "Group by det.codeCaisse"
-    )
-    List<MouvementCaisseDTO> calculDebitAndCredit();
-
+ 
 }

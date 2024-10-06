@@ -4,10 +4,13 @@
  */
 package com.DevPointSystem.Comptabilite.Recette.factory;
 
+import com.DevPointSystem.Comptabilite.Parametrage.domaine.Caisse;
 import com.DevPointSystem.Comptabilite.Parametrage.factory.CaisseFactory;
 import com.DevPointSystem.Comptabilite.Parametrage.factory.DeviseFactory;
 import com.DevPointSystem.Comptabilite.Parametrage.factory.ModeReglementFactory;
+import com.DevPointSystem.Comptabilite.Parametrage.repository.CaisseRepo;
 import com.DevPointSystem.Comptabilite.Recette.domaine.MouvementCaisse;
+import com.DevPointSystem.Comptabilite.Recette.dto.DetailsAlimentationCaisseDTO;
 import com.DevPointSystem.Comptabilite.Recette.dto.MouvementCaisseDTO;
 import com.DevPointSystem.Comptabilite.Recette.dto.SoldeCaisseDTO;
 import com.DevPointSystem.Comptabilite.Recette.repository.MouvementCaisseRepo;
@@ -26,9 +29,20 @@ public class MouvementCaisseFactory {
 
     private final MouvementCaisseRepo mouvementCaisseRepo;
 
-    public MouvementCaisseFactory(MouvementCaisseRepo mouvementCaisseRepo) {
+       private final CaisseRepo caisseRepo;
+
+    public MouvementCaisseFactory(MouvementCaisseRepo mouvementCaisseRepo, CaisseRepo caisseRepo) {
         this.mouvementCaisseRepo = mouvementCaisseRepo;
+        this.caisseRepo = caisseRepo;
     }
+       
+  
+
+    
+    
+
+   
+    
 
     public static MouvementCaisse createMouvementCaisseByCode(int code) {
         MouvementCaisse domaine = new MouvementCaisse();
@@ -92,6 +106,13 @@ public class MouvementCaisseFactory {
             dto.setCaisseDTO(CaisseFactory.caisseToCaisseDTO(domaine.getCaisse()));
             dto.setCodeCaisse(domaine.getCodeCaisse());
 
+//            dto.setCaisseDTOTr(CaisseFactory.caisseToCaisseDTO(domaine.getCaisseTr()));
+            dto.setCodeCaisseTr(domaine.getCodeCaisseTr());
+//      Caisse caisse = new Caisse();
+//        caisse = caisseRepo.getReferenceById(domaine.get(0).getCodeCaisseTr());
+       
+//                        dto.setDesignationCaisseTr(CaisseFactory.createCaisseByCode(domaine.getCodeCaisseTr()).getDesignationAr());
+
             dto.setCodeCaisseTr(domaine.getCodeCaisseTr());
 
             dto.setModeReglementDTO(ModeReglementFactory.modeReglementToModeReglementDTO(domaine.getModeReglement()));
@@ -130,6 +151,4 @@ public class MouvementCaisseFactory {
 //        }
 //        return list;
 //    }
-
-   
 }

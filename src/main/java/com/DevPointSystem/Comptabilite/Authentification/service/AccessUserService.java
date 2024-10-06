@@ -61,7 +61,7 @@ public class AccessUserService {
     @Transactional(readOnly = true)
     public AccessUserDTO findOneByCode(Integer id) {
         User domaine = accessUserRepo.getReferenceById(id);
-        RestPreconditions.checkFound(domaine, "UserName.NotFound");
+        Preconditions.checkArgument(domaine !=null, "UserName.NotFound");
         AccessUserDTO dto = AccessUserFactory.accessUserToAccessUserDTO(domaine, false);
         return dto;
     }

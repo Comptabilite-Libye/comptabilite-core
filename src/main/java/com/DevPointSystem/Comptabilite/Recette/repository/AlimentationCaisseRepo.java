@@ -23,4 +23,6 @@ public interface AlimentationCaisseRepo extends JpaRepository<AlimentationCaisse
 
     List<AlimentationCaisse> findAlimentationCaisseByCodeEtatApprouver(Integer codeEtatApprouver);
 
+    List<AlimentationCaisse> findAllByOrderByCodeSaisieDesc();
+
 }

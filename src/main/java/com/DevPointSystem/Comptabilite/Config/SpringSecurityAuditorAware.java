@@ -1,25 +1,20 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.DevPointSystem.Comptabilite.Config;
 
+import com.DevPointSystem.Comptabilite.Authentification.domaine.User;
 import java.util.Optional;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.AuditorAware;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 
 /**
  *
- * @author Administrateur
+ * @author Administrator
  */
-class SpringSecurityAuditorAware implements AuditorAware<User> {
-
-  public Optional<User> getCurrentAuditor() {
+public class SpringSecurityAuditorAware {
+     public Optional<User> getCurrentAuditor() {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

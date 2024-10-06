@@ -10,16 +10,13 @@ import com.DevPointSystem.Comptabilite.Parametrage.dto.SocieteDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.paramDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.service.ParamService;
 import com.DevPointSystem.Comptabilite.Parametrage.service.SocieteService;
-import com.DevPointSystem.Comptabilite.Recette.domaine.AlimentationCaisse;
-import com.DevPointSystem.Comptabilite.Recette.dto.AlimentationCaisseDTO;
-import com.DevPointSystem.Comptabilite.Recette.dto.DetailsAlimentationCaisseDTO;
-import com.DevPointSystem.Comptabilite.Recette.service.AlimentationCaisseService;
-import com.google.common.base.Preconditions;
+import com.DevPointSystem.Comptabilite.Recette.domaine.TransfertCaisse;
+import com.DevPointSystem.Comptabilite.Recette.dto.TransfertCaisseDTO;
+import com.DevPointSystem.Comptabilite.Recette.service.TransfertCaisseService;
 import jakarta.validation.Valid;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +25,7 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.export.SimpleExporterInput;
@@ -49,10 +46,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import net.sf.jasperreports.engine.design.JRDesignBand;
-import net.sf.jasperreports.engine.design.JasperDesign;
 
 /**
  *
@@ -60,96 +54,85 @@ import net.sf.jasperreports.engine.design.JasperDesign;
  */
 @RestController
 @RequestMapping("/api/recette/")
-public class AlimentationCaisseRessource {
-
-    private final AlimentationCaisseService alimentationCaisseService;
+public class TransfertCaisseRessource {
+    private final TransfertCaisseService transfertCaisseService;
     private final ParamService paramService;
     private final SocieteService societeService;
 
     private final AccessUserService accessUserService;
 
-    public AlimentationCaisseRessource(AlimentationCaisseService alimentationCaisseService, ParamService paramService, SocieteService societeService, AccessUserService accessUserService) {
-        this.alimentationCaisseService = alimentationCaisseService;
+    public TransfertCaisseRessource(TransfertCaisseService transfertCaisseService, ParamService paramService, SocieteService societeService, AccessUserService accessUserService) {
+        this.transfertCaisseService = transfertCaisseService;
         this.paramService = paramService;
         this.societeService = societeService;
         this.accessUserService = accessUserService;
     }
 
-    @GetMapping("alimentation_caisse/{code}")
-    public ResponseEntity<AlimentationCaisseDTO> getAlimentationCaisseByCode(@PathVariable Integer code) {
-        AlimentationCaisseDTO dTO = alimentationCaisseService.findOne(code);
+    @GetMapping("transfert_caisse/{code}")
+    public ResponseEntity<TransfertCaisseDTO> getTransfertCaisseByCode(@PathVariable Integer code) {
+        TransfertCaisseDTO dTO = transfertCaisseService.findOne(code);
         return ResponseEntity.ok().body(dTO);
     }
 
-    @GetMapping("alimentation_caisse/all")
-    public ResponseEntity<List<AlimentationCaisseDTO>> getAllAlimentationCaisse() {
-        return ResponseEntity.ok().body(alimentationCaisseService.findAllAlimentationCaisse());
+    @GetMapping("transfert_caisse/all")
+    public ResponseEntity<List<TransfertCaisseDTO>> getAllTransfertCaisse() {
+        return ResponseEntity.ok().body(transfertCaisseService.findAllTransfertCaisse());
     }
 
-    @GetMapping("alimentation_caisse/codeCaisse")
-    public ResponseEntity<Collection<AlimentationCaisseDTO>> getAlimentationCaisseByCodeCaisse(@RequestParam Collection<Integer> codeCaisse) {
-        Collection<AlimentationCaisseDTO> dTOs = alimentationCaisseService.findByCodeCaisse(codeCaisse);
-        return ResponseEntity.ok().body(dTOs);
-    }
+    
 
-    @GetMapping("alimentation_caisse/codeDevise")
-    public ResponseEntity<Collection<AlimentationCaisseDTO>> getAlimentationCaisseByCodeDevise(@RequestParam Collection<Integer> codeDevise) {
-        Collection<AlimentationCaisseDTO> dTOs = alimentationCaisseService.findByCodeDevise(codeDevise);
-        return ResponseEntity.ok().body(dTOs);
-    }
+ 
 
-    @GetMapping("alimentation_caisse/EtatApprouver/{codeEtatApprouver}")
-    public ResponseEntity<List<AlimentationCaisseDTO>> getAppelOffreByCodeEtatApprouve(@PathVariable Integer codeEtatApprouver) {
-        List<AlimentationCaisseDTO> dto = alimentationCaisseService.findByEtatApprouver(codeEtatApprouver);
+    @GetMapping("transfert_caisse/EtatApprouver/{codeEtatApprouver}")
+    public ResponseEntity<List<TransfertCaisseDTO>> getAppelOffreByCodeEtatApprouve(@PathVariable Integer codeEtatApprouver) {
+        List<TransfertCaisseDTO> dto = transfertCaisseService.findByEtatApprouver(codeEtatApprouver);
         return ResponseEntity.ok().body(dto);
 
     }
 
-    @PostMapping("alimentation_caisse")
-    public ResponseEntity<AlimentationCaisseDTO> postAlimentationCaisse(@Valid @RequestBody AlimentationCaisseDTO dTO, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
-        AlimentationCaisseDTO result = alimentationCaisseService.save(dTO);
+    @PostMapping("transfert_caisse")
+    public ResponseEntity<TransfertCaisseDTO> postTransfertCaisse(@Valid @RequestBody TransfertCaisseDTO dTO, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
+        TransfertCaisseDTO result = transfertCaisseService.save(dTO);
         return ResponseEntity.created(new URI("/api/parametrage/" + result.getCode())).body(result);
     }
 
-//    @PutMapping("alimentation_caisse/update")
-//    public ResponseEntity<AlimentationCaisseDTO> updateAlimentationCaisse(@Valid @RequestBody AlimentationCaisseDTO dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
-//        AlimentationCaisseDTO result = alimentationCaisseService.update(dto);
+//    @PutMapping("transfert_caisse/update")
+//    public ResponseEntity<TransfertCaisseDTO> updateTransfertCaisse(@Valid @RequestBody TransfertCaisseDTO dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
+//        TransfertCaisseDTO result = transfertCaisseService.update(dto);
 //        return ResponseEntity.ok().body(result);
 //    }
-    @PutMapping("alimentation_caisse/update")
-    public ResponseEntity<AlimentationCaisseDTO> updateAlimentationCaisse(@Valid @RequestBody AlimentationCaisseDTO dTO, BindingResult bindingResult) throws MethodArgumentNotValidException {
-        AlimentationCaisseDTO result = alimentationCaisseService.updateNewWithFlush(dTO);
+    @PutMapping("transfert_caisse/update")
+    public ResponseEntity<TransfertCaisseDTO> updateTransfertCaisse(@Valid @RequestBody TransfertCaisseDTO dTO, BindingResult bindingResult) throws MethodArgumentNotValidException {
+        TransfertCaisseDTO result = transfertCaisseService.updateNewWithFlush(dTO);
         return ResponseEntity.ok().body(result);
     }
 
-    @PutMapping("alimentation_caisse/approuver")
-    public ResponseEntity<AlimentationCaisseDTO> approuveDemandeAchat(@Valid @RequestBody AlimentationCaisseDTO dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
-        AlimentationCaisseDTO result = alimentationCaisseService.approuveAC(dto);
+    @PutMapping("transfert_caisse/approuver")
+    public ResponseEntity<TransfertCaisseDTO> approuveDemandeAchat(@Valid @RequestBody TransfertCaisseDTO dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
+        TransfertCaisseDTO result = transfertCaisseService.approuveAC(dto);
         return ResponseEntity.ok().body(result);
     }
 
-    @PutMapping("alimentation_caisse/cancel_approuver")
-    public ResponseEntity<AlimentationCaisseDTO> Cancel_approuveDemandeAchat(@Valid @RequestBody AlimentationCaisseDTO dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
-        AlimentationCaisseDTO result = alimentationCaisseService.CancelapprouveAC(dto);
+    @PutMapping("transfert_caisse/cancel_approuver")
+    public ResponseEntity<TransfertCaisseDTO> Cancel_approuveDemandeAchat(@Valid @RequestBody TransfertCaisseDTO dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
+        TransfertCaisseDTO result = transfertCaisseService.CancelapprouveAC(dto);
         return ResponseEntity.ok().body(result);
     }
 
-    @DeleteMapping("alimentation_caisse/delete/{code}")
-    public ResponseEntity<AlimentationCaisse> deleteAlimentationCaisse(@PathVariable("code") Integer code) {
-        alimentationCaisseService.deleteAlimentationCaisse(code);
+    @DeleteMapping("transfert_caisse/delete/{code}")
+    public ResponseEntity<TransfertCaisse> deleteTransfertCaisse(@PathVariable("code") Integer code) {
+        transfertCaisseService.deleteTransfertCaisse(code);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("alimentation_caisse/edition/{code}")
+    @GetMapping("transfert_caisse/edition/{code}")
     public ResponseEntity<byte[]> getReport(@PathVariable Integer code) throws Exception {
-
-        Collection<DetailsAlimentationCaisseDTO> dto = alimentationCaisseService.findOneWithDetails(code);
+ 
 
         String fileNameJrxml = "src/main/resources/Reports/AlimentCaisse.jrxml";
         paramDTO dTOs = paramService.findParamByCodeParamS("NomSociete");
-        AlimentationCaisseDTO rslt = alimentationCaisseService.findOne(code);
+        TransfertCaisseDTO rslt = transfertCaisseService.findOne(code);
 
-        Preconditions.checkArgument(rslt.getCodeUserApprouver() !=null, "error.User.Approuve.Found");
         AccessUserDTO getsignature = accessUserService.findOneByCode(rslt.getCodeUserApprouver());
 
         SocieteDTO societeDTO = societeService.findOne(1);
@@ -157,13 +140,11 @@ public class AlimentationCaisseRessource {
         JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("ItemDataSource", new JRBeanCollectionDataSource(dto));
+        Map<String, Object> params = new HashMap<>(); 
         params.put("UserCreate", auth.getName());
         params.put("CodeSaisie", rslt.getCodeSaisie());
         params.put("societe", dTOs.getValeur());
-        params.put("devise", rslt.getDeviseDTO().getDesignationAr());
-        params.put("typeRecette", rslt.getDetailsAlimentationCaisseDTOs().iterator().next().getDesignationArTypeRecette());
+        params.put("devise", rslt.getDeviseDTO().getDesignationAr()); 
         params.put("caisse", rslt.getCaisseDTO().getDesignationAr());
         params.put("modeReglement", rslt.getModeReglementDTO().getDesignationAr());
         params.put("montant", rslt.getMontant());
@@ -194,5 +175,4 @@ public class AlimentationCaisseRessource {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(res);
     }
-
 }

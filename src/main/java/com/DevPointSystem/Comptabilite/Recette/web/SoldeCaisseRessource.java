@@ -53,14 +53,11 @@ public class SoldeCaisseRessource {
         List<SoldeCaisseDTO> dTOs = soldeCaisseService.findByCodeDeviseAndCode(codeDevise, code);
         return ResponseEntity.ok().body(dTOs);
     }
-    
-    
-       @GetMapping("solde_caisse/CodeCaisse")
-    public ResponseEntity<SoldeCaisseDTO> getSoldeCaisseByCodeDeviseAndCode(@RequestParam Integer codeCaisse) {
-           SoldeCaisseDTO dTOs = soldeCaisseService.findByCodeCaisse(codeCaisse);
+
+    @GetMapping("solde_caisse/code_caisse")
+    public ResponseEntity<SoldeCaisseDTO> getSoldeCaisseByCodeCaisse(@RequestParam Integer codeCaisse) {
+        SoldeCaisseDTO dTOs = soldeCaisseService.findByCodeCaisse(codeCaisse);
         return ResponseEntity.ok().body(dTOs);
     }
-
-   
 
 }

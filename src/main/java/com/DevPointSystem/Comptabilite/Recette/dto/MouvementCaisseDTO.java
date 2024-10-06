@@ -9,6 +9,7 @@ import com.DevPointSystem.Comptabilite.Parametrage.dto.DeviseDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.ModeReglementDTO;
 import java.math.BigDecimal;
 import java.util.Date;
+import javax.annotation.Nullable;
 
 /**
  *
@@ -20,7 +21,12 @@ public class MouvementCaisseDTO {
 
     private CaisseDTO caisseDTO;
 
-    private Integer codeCaisse;
+    private Integer codeCaisse; 
+    private Integer codeCaisseTr;   
+    
+ 
+    private String designationCaisse;
+
 
     private DeviseDTO deviseDTO;
 
@@ -35,9 +41,8 @@ public class MouvementCaisseDTO {
     private BigDecimal credit;
 
     private BigDecimal mntDevise;
- 
 
-    private Integer codeCaisseTr;
+//    private Integer codeCaisseTr;
 
     private String codeSaisie;
 
@@ -49,17 +54,12 @@ public class MouvementCaisseDTO {
 
     public MouvementCaisseDTO() {
     }
-    
-   
 
-    
- public MouvementCaisseDTO(Integer codeCaisse, BigDecimal debit, BigDecimal credit ) {
+    public MouvementCaisseDTO(Integer codeCaisse, BigDecimal debit, BigDecimal credit) {
         this.codeCaisse = codeCaisse;
         this.debit = debit;
         this.credit = credit;
     }
-    
-    
 
     public Integer getCode() {
         return code;
@@ -141,7 +141,6 @@ public class MouvementCaisseDTO {
         this.mntDevise = mntDevise;
     }
 
- 
     public Integer getCodeCaisseTr() {
         return codeCaisseTr;
     }
@@ -183,8 +182,14 @@ public class MouvementCaisseDTO {
     }
 
    
-    
-    
+    public String getDesignationCaisse() {
+        return designationCaisse;
+    }
 
-    
+    public void setDesignationCaisse(String designationCaisse) {
+        this.designationCaisse = designationCaisse;
+    }
+
+ 
+
 }

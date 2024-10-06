@@ -64,7 +64,7 @@ public class AlimentationCaisseService {
 
     @Transactional(readOnly = true)
     public List<AlimentationCaisseDTO> findAllAlimentationCaisse() {
-        return AlimentationCaisseFactory.listAlimentationCaisseToAlimentationCaisseDTOs(alimentationCaisseRepo.findAll());
+        return AlimentationCaisseFactory.listAlimentationCaisseToAlimentationCaisseDTOs(alimentationCaisseRepo.findAllByOrderByCodeSaisieDesc());
 
     }
 
@@ -93,8 +93,8 @@ public class AlimentationCaisseService {
     }
 
     public AlimentationCaisseDTO save(AlimentationCaisseDTO dto) {
-        AlimentationCaisse domaine = AlimentationCaisseFactory.alimentationCaisseDTOToAlimentationCaisse(new AlimentationCaisse(), dto);
 
+        AlimentationCaisse domaine = AlimentationCaisseFactory.alimentationCaisseDTOToAlimentationCaisse(new AlimentationCaisse(), dto); 
         Compteur CompteurCodeSaisie = compteurService.findOne("CodeSaisieAC");
         String codeSaisieAC = CompteurCodeSaisie.getPrefixe() + CompteurCodeSaisie.getSuffixe();
         domaine.setCodeSaisie(codeSaisieAC);
@@ -149,7 +149,7 @@ public class AlimentationCaisseService {
 
         MouvementCaisse mvtCaisse = new MouvementCaisse();
         if (dto.getCodeEtatApprouver() == 2) {
-            mvtCaisse.setCode(dto.getCode());
+//            mvtCaisse.setCode(dto.getCode());
             mvtCaisse.setCodeSaisie(inBase.getCodeSaisie());
             mvtCaisse.setDebit(inBase.getMontant());
             mvtCaisse.setMntDevise(inBase.getMontantEnDevise());
@@ -163,7 +163,7 @@ public class AlimentationCaisseService {
                 mvtCaisse.setCaisse(CaisseFactory.createCaisseByCode(inBase.getCodeCaisse()));
             }
 
-            mvtCaisse.setCodeCaisseTr(0);
+//            mvtCaisse.setCodeCaisseTr(0);
 
             mvtCaisse.setCodeDevise(inBase.getCodeDevise());
             if (mvtCaisse.getCodeDevise() != null) {
@@ -187,7 +187,7 @@ public class AlimentationCaisseService {
         BigDecimal sumQteLivred = qteOldDebit.add(qteLivree);
         soldeCaisseDTOs.setDebit(sumQteLivred);
         soldeCaisseService.updateMontant(soldeCaisseDTOs);
-
+        System.out.println("ok marche");
         AlimentationCaisseDTO resultDTO = AlimentationCaisseFactory.alimentationCaisseToAlimentationCaisseDTO(inBase);
         return resultDTO;
     }

@@ -21,15 +21,17 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
- 
+
 @SpringBootApplication
 @EnableAutoConfiguration
 @EnableJpaAuditing
-public class ComptabiliteCoreApplication { 
+public class ComptabiliteCoreApplication {
+
     @Autowired
-  private ObjectMapper objectMapper;
-    
+    private ObjectMapper objectMapper;
+
     private static final Logger log = LoggerFactory.getLogger(ComptabiliteCoreApplication.class);
     public static String jwtSecret = "";
 //    public static void main(String[] args) throws UnknownHostException {
@@ -93,13 +95,10 @@ public class ComptabiliteCoreApplication {
 //  public void setUp() {
 //    objectMapper.registerModule(new JavaTimeModule());
 //  }
-  
-    
+
 //    newwww configggg
-  
 //  
 //   private static final Logger log = LoggerFactory.getLogger(MangRessApplication.class);
-
     public static void main(String[] args) throws UnknownHostException {
 
         SpringApplication app = new SpringApplication(ComptabiliteCoreApplication.class);
@@ -155,10 +154,14 @@ public class ComptabiliteCoreApplication {
 
     }
 
+//    @Bean
+//    public LocaleResolver localeResolver() {
+//        SessionLocaleResolver slr = new SessionLocaleResolver();
+//        slr.setDefaultLocale(Locale.US);
+//        return slr;
+//    }
     @Bean
     public LocaleResolver localeResolver() {
-        SessionLocaleResolver slr = new SessionLocaleResolver();
-        slr.setDefaultLocale(Locale.US);
-        return slr;
+        return new AcceptHeaderLocaleResolver();
     }
 }

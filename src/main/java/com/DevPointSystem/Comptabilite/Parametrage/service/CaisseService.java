@@ -20,6 +20,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
@@ -28,6 +29,13 @@ import java.math.BigDecimal;
 @Transactional
 @Service
 public class CaisseService {
+
+    static String LANGUAGE_SEC;
+
+    @Value("${lang.secondary}")
+    public void setLanguage(String db) {
+        LANGUAGE_SEC = db;
+    }
 
     private final CaisseRepo caisseRepo;
     private final SoldeCaisseRepo soldeCaisseRepo;
@@ -51,13 +59,20 @@ public class CaisseService {
     @Transactional(readOnly = true)
     public CaisseDTO findOne(Integer code) {
         Caisse domaine = caisseRepo.findByCode(code);
-        Preconditions.checkArgument(domaine != null, caisseError);
+        Preconditions.checkArgument(domaine.getCode() != null, caisseError);
         return CaisseFactory.caisseToCaisseDTO(domaine);
     }
 
-    @Transactional(readOnly = true)
-    public List<Caisse> findByCodeNotIn(List<Integer> code) {
-        return caisseRepo.findByCodeNotIn(Helper.removeNullValueFromCollection(code));
+//    @Transactional(readOnly = true)
+//    public List<CaisseDTO> findByCodeNotIn(List<Integer> code,List<Integer> codeDevise) {
+////        List<Caisse> domaine = caisseRepo.findByCodeNotIn(Helper.removeNullValueFromCollection(code));
+//
+//        return CaisseFactory.listCaisseToCaisseDTOs(caisseRepo.findByCodeNotInAndCodeDeviseIn(Helper.removeNullValueFromCollection(code,codeDevise)));
+//    }
+//    
+     @Transactional(readOnly = true)
+    public List<Caisse> findByCodeNotInAndCodeDevise(Integer code,Integer codeDevise ) {
+        return caisseRepo.findByCodeNotAndCodeDevise(code,codeDevise);
     }
 
     @Transactional(readOnly = true)
@@ -101,7 +116,7 @@ public class CaisseService {
     public void deleteCaisse(Integer code) {
         Preconditions.checkArgument(caisseRepo.existsById(code), "error.CaisseNotFound");
         Preconditions.checkArgument(!mouvementCaisseRepo.existsByCodeCaisse(code), "error.CaisseMouvementer");
- 
+
         SoldeCaisse soldeCaisse = soldeCaisseRepo.findByCodeCaisse(code);
         soldeCaisseService.deleteSoldeCaisse(soldeCaisse.getCode());
         caisseRepo.deleteById(code);

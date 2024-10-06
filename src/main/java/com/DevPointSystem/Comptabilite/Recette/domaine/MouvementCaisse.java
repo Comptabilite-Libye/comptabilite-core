@@ -55,7 +55,12 @@ public class MouvementCaisse {
     @Column(name = "code_caisse", updatable = false, insertable = false)
     private Integer codeCaisse;
 
-    @Column(name = "code_caisse_tr", nullable = false)
+//    @JoinColumn(name = "code_caisse_tr", referencedColumnName = "Code",insertable = false,updatable = false)
+//    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+//    @JsonBackReference
+//    private Caisse caisseTr;
+
+    @Column(name = "code_caisse_tr")
     private Integer codeCaisseTr;
 
     @JoinColumn(name = "code_devise", referencedColumnName = "Code", nullable = false)
@@ -218,4 +223,14 @@ public class MouvementCaisse {
         this.codeTier = codeTier;
     }
 
+//    public Caisse getCaisseTr() {
+//        return caisseTr;
+//    }
+//
+//    public void setCaisseTr(Caisse caisseTr) {
+//        this.caisseTr = caisseTr;
+//    }
+
+    
+    
 }

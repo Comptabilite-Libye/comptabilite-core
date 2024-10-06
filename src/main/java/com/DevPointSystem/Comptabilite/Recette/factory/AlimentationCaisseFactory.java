@@ -68,7 +68,10 @@ public class AlimentationCaisseFactory {
             if (domaine.getCodeEtatApprouver() != null) {
                 domaine.setEtatApprouver(EtatApprouverFactory.createEtatApprouverByCode(dto.getCodeEtatApprouver()));
             }
-
+            
+            if(dto.getDetailsAlimentationCaisseDTOs().isEmpty()){
+                 throw new IllegalArgumentException("error.DetailsRequired");
+            }  
             Collection<DetailsAlimentationCaisse> detailsCollections = new ArrayList<>();
             dto.getDetailsAlimentationCaisseDTOs().forEach(x -> {
                 DetailsAlimentationCaisse detailsAlimentationCaisse = new DetailsAlimentationCaisse();

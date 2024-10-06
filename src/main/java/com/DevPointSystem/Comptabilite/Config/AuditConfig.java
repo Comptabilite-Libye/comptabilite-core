@@ -4,13 +4,16 @@
  * and open the template in the editor.
  */
 package com.DevPointSystem.Comptabilite.Config;
+ 
+/**
+ *
+ * @author Administrateur
+ */
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.security.core.userdetails.User;
 
 /**
  *
@@ -22,7 +25,7 @@ public class AuditConfig {
 
     @Primary
     @Bean
-    public AuditorAware<User> auditorProvider() {
+    public SpringSecurityAuditorAware auditorProvider() {
         return new SpringSecurityAuditorAware();
     }
 }

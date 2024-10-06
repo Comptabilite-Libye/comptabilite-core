@@ -4,9 +4,7 @@
  */
 package com.DevPointSystem.Comptabilite.web.Util;
 
- 
- 
- 
+   
 import com.DevPointSystem.Comptabilite.web.errors.IllegalBusinessLogiqueException;
 import com.DevPointSystem.Comptabilite.web.errors.MyResourceNotFoundException;
 import org.slf4j.Logger;

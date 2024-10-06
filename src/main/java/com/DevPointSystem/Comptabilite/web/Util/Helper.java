@@ -180,6 +180,10 @@ public class Helper {
     public static <T, U> List<T> removeNullValueFromCollection(Collection<T> booleans) {
         return booleans.stream().filter(f -> f != null).collect(Collectors.toList());
     }
+    
+        public static <T, U> List<T> removeNullValueFromCollection(Collection<T> booleans , Collection<T> booleans2) {
+        return booleans.stream().filter(f -> f != null).collect(Collectors.toList());
+    }
 
     public static LocalDate resetTime(LocalDate date) {
         LocalTime time = LocalTime.parse("00:00:00");
