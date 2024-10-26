@@ -6,6 +6,7 @@ package com.DevPointSystem.Comptabilite.Parametrage.factory;
 
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.Banque;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.BanqueDTO;
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,8 @@ public class BanqueFactory {
             domaine.setDesignationLt(dto.getDesignationLt());
             domaine.setDesignationAr(dto.getDesignationAr());
             domaine.setCodeSaisie(dto.getCodeSaisie());
+            
+//            Preconditions.checkArgument(dto.getRib() != null , "RibbbObligatoir");
             domaine.setRib(dto.getRib());
 
             domaine.setActif(dto.isActif());

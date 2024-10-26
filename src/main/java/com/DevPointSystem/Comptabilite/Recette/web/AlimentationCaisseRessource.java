@@ -24,11 +24,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.export.SimpleExporterInput;
@@ -51,8 +52,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import net.sf.jasperreports.engine.design.JRDesignBand;
 import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
+import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 
 /**
  *
@@ -149,7 +153,7 @@ public class AlimentationCaisseRessource {
         paramDTO dTOs = paramService.findParamByCodeParamS("NomSociete");
         AlimentationCaisseDTO rslt = alimentationCaisseService.findOne(code);
 
-        Preconditions.checkArgument(rslt.getCodeUserApprouver() !=null, "error.User.Approuve.Found");
+        Preconditions.checkArgument(rslt.getCodeUserApprouver() != null, "error.User.Approuve.Found");
         AccessUserDTO getsignature = accessUserService.findOneByCode(rslt.getCodeUserApprouver());
 
         SocieteDTO societeDTO = societeService.findOne(1);
@@ -193,6 +197,76 @@ public class AlimentationCaisseRessource {
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(res);
+    }
+
+    @GetMapping("alimentation_caisse/excel/{code}")
+    public ResponseEntity<byte[]> getReportExcel(@PathVariable Integer code) throws Exception {
+
+        Collection<DetailsAlimentationCaisseDTO> dto = alimentationCaisseService.findOneWithDetails(code);
+
+        String fileNameJrxml = "src/main/resources/Reports/AlimentCaisse.jrxml";
+        paramDTO dTOs = paramService.findParamByCodeParamS("NomSociete");
+        AlimentationCaisseDTO rslt = alimentationCaisseService.findOne(code);
+
+        Preconditions.checkArgument(rslt.getCodeUserApprouver() != null, "error.User.Approuve.Found");
+        AccessUserDTO getsignature = accessUserService.findOneByCode(rslt.getCodeUserApprouver());
+
+        SocieteDTO societeDTO = societeService.findOne(1);
+        JasperDesign jasperDesign = JRXmlLoader.load(fileNameJrxml);
+        JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("ItemDataSource", new JRBeanCollectionDataSource(dto));
+        params.put("UserCreate", auth.getName());
+        params.put("CodeSaisie", rslt.getCodeSaisie());
+        params.put("societe", dTOs.getValeur());
+        params.put("devise", rslt.getDeviseDTO().getDesignationAr());
+        params.put("typeRecette", rslt.getDetailsAlimentationCaisseDTOs().iterator().next().getDesignationArTypeRecette());
+        params.put("caisse", rslt.getCaisseDTO().getDesignationAr());
+        params.put("modeReglement", rslt.getModeReglementDTO().getDesignationAr());
+        params.put("montant", rslt.getMontant());
+        params.put("montantEnDevise", rslt.getMontantEnDevise());
+        params.put("tauxChange", rslt.getTauxChange());
+        params.put("observation", rslt.getObservation());
+        params.put("dateCreate", rslt.getDateCreate());
+        params.put("designationEtatApprouve", rslt.getEtatApprouverDTO().getDesignation());
+
+        params.put("logo", societeDTO.getLogo());
+        params.put("signature", getsignature.getSignature());
+
+        final Map<String, Object> parameters = new HashMap<>();
+        parameters.put(JRParameter.IS_IGNORE_PAGINATION, true);
+
+        JasperPrint print = JasperFillManager.fillReport(jasperReport, params, new JREmptyDataSource());
+        SimpleXlsxReportConfiguration configuration = new SimpleXlsxReportConfiguration();
+        configuration.setOnePagePerSheet(true);
+        configuration.setDetectCellType(true); // Detect cell types (date and etc.)
+        configuration.setWhitePageBackground(false); // No white background!
+ 
+
+        // No spaces between rows and columns 
+        configuration.setRemoveEmptySpaceBetweenRows(true);
+        configuration.setRemoveEmptySpaceBetweenColumns(true);
+        configuration.setFontSizeFixEnabled(true);
+
+        JRXlsxExporter exporter = new JRXlsxExporter();
+        exporter.setConfiguration(configuration);
+        ByteArrayOutputStream excelOutputStream = new ByteArrayOutputStream();
+        exporter.setExporterInput(new SimpleExporterInput(print));
+        exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(excelOutputStream));
+
+        exporter.exportReport();
+
+        byte[] excelData = excelOutputStream.toByteArray();
+        HttpHeaders headers = new HttpHeaders();
+        MediaType excelMediaType = new MediaType("application", "vnd.ms-excel");
+        headers.add("Content-Disposition", "attachment; filename=report.xls");
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(excelMediaType)
+                .body(excelData);
     }
 
 }

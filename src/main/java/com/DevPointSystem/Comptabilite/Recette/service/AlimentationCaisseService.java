@@ -12,7 +12,6 @@ import com.DevPointSystem.Comptabilite.Parametrage.service.CompteurService;
 import com.DevPointSystem.Comptabilite.Recette.domaine.AlimentationCaisse;
 import com.DevPointSystem.Comptabilite.Recette.domaine.DetailsAlimentationCaisse;
 import com.DevPointSystem.Comptabilite.Recette.domaine.MouvementCaisse;
-import com.DevPointSystem.Comptabilite.Recette.domaine.SoldeCaisse;
 import com.DevPointSystem.Comptabilite.Recette.dto.AlimentationCaisseDTO;
 import com.DevPointSystem.Comptabilite.Recette.dto.DetailsAlimentationCaisseDTO;
 import com.DevPointSystem.Comptabilite.Recette.dto.SoldeCaisseDTO;
@@ -25,10 +24,9 @@ import com.DevPointSystem.Comptabilite.Recette.repository.SoldeCaisseRepo;
 import com.DevPointSystem.Comptabilite.web.Util.Helper;
 import com.google.common.base.Preconditions;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,8 +68,10 @@ public class AlimentationCaisseService {
 
     @Transactional(readOnly = true)
     public AlimentationCaisseDTO findOne(Integer code) {
-        AlimentationCaisse domaine = alimentationCaisseRepo.getReferenceById(code);
+        AlimentationCaisse domaine = alimentationCaisseRepo.findByCode(code);
         Preconditions.checkArgument(domaine.getCode() != null, "error.AlimentationCaisseNotFound");
+// 
+
         return AlimentationCaisseFactory.alimentationCaisseToAlimentationCaisseDTOUpdate(domaine);
     }
 
@@ -94,7 +94,7 @@ public class AlimentationCaisseService {
 
     public AlimentationCaisseDTO save(AlimentationCaisseDTO dto) {
 
-        AlimentationCaisse domaine = AlimentationCaisseFactory.alimentationCaisseDTOToAlimentationCaisse(new AlimentationCaisse(), dto); 
+        AlimentationCaisse domaine = AlimentationCaisseFactory.alimentationCaisseDTOToAlimentationCaisse(new AlimentationCaisse(), dto);
         Compteur CompteurCodeSaisie = compteurService.findOne("CodeSaisieAC");
         String codeSaisieAC = CompteurCodeSaisie.getPrefixe() + CompteurCodeSaisie.getSuffixe();
         domaine.setCodeSaisie(codeSaisieAC);
@@ -164,7 +164,6 @@ public class AlimentationCaisseService {
             }
 
 //            mvtCaisse.setCodeCaisseTr(0);
-
             mvtCaisse.setCodeDevise(inBase.getCodeDevise());
             if (mvtCaisse.getCodeDevise() != null) {
                 mvtCaisse.setDevise(DeviseFactory.createDeviseByCode(inBase.getCodeDevise()));

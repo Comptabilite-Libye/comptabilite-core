@@ -10,14 +10,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
- 
 
 /**
  *
  * @author Administrator
  */
 @Entity
-@Table(name = "compteur", schema = "param") 
+@Table(name = "compteur", schema = "param")
 public class Compteur {
 
     @Id
@@ -28,12 +27,14 @@ public class Compteur {
     @Column(name = "prefixe", columnDefinition = ("varchar(3)"))
     private String prefixe;
 
-     
     @Column(name = "suffixe", columnDefinition = ("varchar(10)"))
     private String suffixe;
 
     @Column(name = "compteur", columnDefinition = ("nvarchar(200)"))
     private String compteur;
+
+    @Column(name = "niveau")
+    private Integer niveau;
 
     public Compteur() {
     }
@@ -70,6 +71,13 @@ public class Compteur {
         this.compteur = compteur;
     }
 
-    
+    public Integer getNiveau() {
+        return niveau;
+    }
+
+    public void setNiveau(Integer niveau) {
+        this.niveau = niveau;
+    }
+
     
 }

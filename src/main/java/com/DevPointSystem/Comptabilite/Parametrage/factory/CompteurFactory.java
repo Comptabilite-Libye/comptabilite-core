@@ -37,7 +37,9 @@ public class CompteurFactory {
  
             domaine.setCompteur(Dto.getCompteur());
             domaine.setPrefixe(Dto.getPrefixe());
-            domaine.setSuffixe(Dto.getSuffixe()); 
+            domaine.setSuffixe(Dto.getSuffixe());      
+            domaine.setNiveau(Dto.getNiveau()); 
+
  
  
             return domaine;
@@ -54,7 +56,7 @@ public class CompteurFactory {
             
             dTO.setCompteur(domaine.getCompteur());
             dTO.setPrefixe(domaine.getPrefixe());
-            dTO.setSuffixe(domaine.getSuffixe()); 
+            dTO.setSuffixe(domaine.getSuffixe());        
 
             return dTO;
         } else {

@@ -12,14 +12,12 @@ package com.DevPointSystem.Comptabilite.Config;
 import com.DevPointSystem.Comptabilite.web.errors.IllegalBusinessLogiqueException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.BufferedReader;
 import org.slf4j.*;
 import org.springframework.http.*;
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import org.springframework.context.i18n.LocaleContextHolder;
-
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
@@ -32,43 +30,24 @@ public class RequestLoggingInterceptor implements ClientHttpRequestInterceptor {
     private final static Logger log = LoggerFactory.getLogger(RequestLoggingInterceptor.class);
 
 //    @Override
-//    public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
-//            throws IOException {
-//        ClientHttpResponse response = null;
-//        try {
-//            if (RequestContextHolder.getRequestAttributes() != null) {
-//                String token = RequestContextHolder.getRequestAttributes().getSessionId();
-//                String lang = LocaleContextHolder.getLocale().getLanguage();
-//                if (request.getHeaders().get("Authorization") == null) { 
-//                    request.getHeaders().add("Authorization", "Bearer " + token);
-//                    System.out.println("com.DevPointSystem.Comptabilite.Config.RequestLoggingInterceptor.intercept()" + token);
-//                }
-////                request.getHeaders().set("x-auth-token", "989410f6-eb7b-45da-b75b-544d86f489f2");
-//                if (request.getHeaders().get("Accept-language") == null) {
-//                    request.getHeaders().add("Accept-language", lang);
-//                }
-//                
-//            }
-//            traceRequest(request, body);
-//            response = execution.execute(request, body);
-//            traceResponse(response);
-//            if (response.getRawStatusCode() != 200 && response.getRawStatusCode() != 201) {
-//                throw new Exception();
-//            }
-//            return response;
-//        } catch (Exception e) {
-//            log.error("-----------------------------Begin Communication Trace Error------------------------------------");
-//            traceRequestWhenError(request, body);
+//    public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+//        ClientHttpResponse response = execution.execute(request, body);
 //
-//            if (response != null) {
+//        log.debug("request method: {}, request URI: {},request Query: {}, request headers: {},  response status code: {}, response headers: {}",
+//                request.getMethod(),
+//                request.getURI(),
+//                request.getURI().getRawQuery(),
+//                request.getHeaders(),
+//                response.getStatusCode(),
+//                response.getHeaders()
+//        );
+//
+//        if (response != null) {
 //                String responseBody = traceResponseWhenError(response);
 //                shouldThrowIllegalBusinessException(response, responseBody);
 //            } else {
 //                log.error("{}", e);
 //            }
-//            log.error("-----------------------------End Communication Trace Error------------------------------------");
-//        }
-//     System.out.println("xxxxxxxxxxxxxxxxxxx");
 //        return response;
 //    }
     @Override
@@ -76,24 +55,39 @@ public class RequestLoggingInterceptor implements ClientHttpRequestInterceptor {
             throws IOException {
         ClientHttpResponse response = null;
         try {
-            traceRequest(request, body); // Log the request
-            response = execution.execute(request, body);
-            traceResponse(response); // Log the response
+            if (RequestContextHolder.getRequestAttributes() != null) {
+                String token = RequestContextHolder.getRequestAttributes().getSessionId();
+                String lang = LocaleContextHolder.getLocale().getLanguage();
+                if (request.getHeaders().get("Authorization") == null) {
+                    request.getHeaders().add("Authorization", "Bearer " + token);
+                    System.out.println("com.DevPointSystem.Comptabilite.Config.RequestLoggingInterceptor.intercept()" + token);
+                }
+//                request.getHeaders().set("x-auth-token", "989410f6-eb7b-45da-b75b-544d86f489f2");
+                if (request.getHeaders().get("Accept-language") == null) {
+                    request.getHeaders().add("Accept-language", lang);
+                }
 
-            // ... (Handle errors as needed) ...
+            }
+            traceRequest(request, body);
+            response = execution.execute(request, body);
+            traceResponse(response);
+            if (response.getRawStatusCode() != 200 && response.getRawStatusCode() != 201) {
+                throw new Exception();
+            }
             return response;
         } catch (Exception e) {
             log.error("-----------------------------Begin Communication Trace Error------------------------------------");
-            traceRequestWhenError(request, body); // Log error details
+            traceRequestWhenError(request, body);
 
             if (response != null) {
                 String responseBody = traceResponseWhenError(response);
-                // ... (Handle errors, possibly throw a custom exception) ...
+                shouldThrowIllegalBusinessException(response, responseBody);
             } else {
                 log.error("{}", e);
             }
             log.error("-----------------------------End Communication Trace Error------------------------------------");
         }
+        System.out.println("xxxxxxxxxxxxxxxxxxx");
         return response;
     }
 
@@ -172,6 +166,6 @@ public class RequestLoggingInterceptor implements ClientHttpRequestInterceptor {
             String description = error.get("message").asText();
             throw new IllegalBusinessLogiqueException(description);
         }
-         
+
     }
 }

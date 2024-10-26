@@ -8,21 +8,13 @@ package com.DevPointSystem.Comptabilite.Authentification.service;
  *
  * @author Administrator
  */
-import com.DevPointSystem.Comptabilite.Authentification.Config.JwtTokenUtil;
+//import com.DevPointSystem.Comptabilite.Authentification.Config.JwtTokenUtil;
 import com.DevPointSystem.Comptabilite.Authentification.domaine.User;
-import com.DevPointSystem.Comptabilite.Authentification.dto.LoginResponse;
 import com.DevPointSystem.Comptabilite.Authentification.dto.LoginUserDto;
-import com.DevPointSystem.Comptabilite.Authentification.dto.RegisterUserDto;
 import com.DevPointSystem.Comptabilite.Authentification.repository.UserRepository;
-import com.DevPointSystem.Comptabilite.Authentification.web.Request.AuthenticationRequest;
-import com.DevPointSystem.Comptabilite.Authentification.web.Response.AuthenticationResponse;
 import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +27,8 @@ public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
     
-    @Autowired
-    private JwtService jwtUtil;
+//    @Autowired
+//    private JwtService jwtUtil;
     
 
     public AuthenticationService(

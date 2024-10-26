@@ -1,5 +1,8 @@
 package com.DevPointSystem.Comptabilite.web.errors;
- 
+
+import com.DevPointSystem.Comptabilite.Authentification.web.Response.ErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import org.slf4j.Logger;
@@ -22,8 +25,8 @@ import org.springframework.web.bind.annotation.*;
  */
 @ControllerAdvice
 public class ExceptionTranslator {
-    
-      private final Logger log = LoggerFactory.getLogger(ExceptionTranslator.class);
+
+    private final Logger log = LoggerFactory.getLogger(ExceptionTranslator.class);
 
     @Autowired
     MessageSource messages;
@@ -68,12 +71,13 @@ public class ExceptionTranslator {
         String translatedmessage = messages.getMessage(exception.getMessage(), obj, loc);
         return builder.body(new ErrorVM("CONFLICT", translatedmessage));
     }
+ 
 
     @ExceptionHandler(IllegalBusinessLogiqueException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<ErrorVM> processMethodNotSupportedException(IllegalBusinessLogiqueException exception) {
-         log.error("IllegalBusinessLogiqueException", exception);
+        log.error("IllegalBusinessLogiqueException", exception);
         Locale loc = LocaleContextHolder.getLocale();
         Object[] obj = new Object[1];
         if (exception.getCause() != null) {

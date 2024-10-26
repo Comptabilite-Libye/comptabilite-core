@@ -6,6 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.5</version>
+        
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.DevPointSystem</groupId>
@@ -16,11 +17,11 @@
     <url/>
     
     <properties>
-<!--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>-->
         <java.version>17</java.version>
     </properties>
-<!--    <dependencies> 
+    <!--    <dependencies> 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jdbc</artifactId>
@@ -191,15 +192,15 @@
     </dependencies>-->
 
 
- <dependencies> 
+    <dependencies> 
      
-     <dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.32</version>
             <type>jar</type>
         </dependency> 
-<!--        <dependency>
+        <!--        <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
@@ -226,19 +227,19 @@
             <version>1.7.25</version>
             <type>jar</type>
         </dependency>
-<!--  <dependency>
-   <groupId>org.springframework.security</groupId>
-   <artifactId>spring-security-config</artifactId>
-   <version>5.3.4.RELEASE</version>
-   <type>jar</type>
-  </dependency>-->
-  <dependency>
+        <!--  <dependency>
+         <groupId>org.springframework.security</groupId>
+         <artifactId>spring-security-config</artifactId>
+         <version>5.3.4.RELEASE</version>
+         <type>jar</type>
+        </dependency>-->
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>6.0</version>
             <type>jar</type>
         </dependency>
-      <dependency>
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
@@ -269,6 +270,11 @@
         </dependency> 
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-fonts</artifactId>
+            <version>6.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
             <version>6.21.0</version>
             <type>jar</type>
@@ -279,8 +285,26 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.15</version> 
+        </dependency>
 
+       
+ 
 
+        <!--        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-core</artifactId>
+            <version>5.0.0</version> 
+        </dependency>
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-jpa</artifactId>
+            <version>5.0.0</version> 
+        </dependency>-->
         
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -313,11 +337,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency> 
-        <dependency>
-            <groupId>com.querydsl</groupId>
-            <artifactId>querydsl-jpa</artifactId>
-        </dependency>
+        </dependency>  
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -339,11 +359,7 @@
             <artifactId>guava</artifactId>
             <version>31.1-jre</version> 
         </dependency>
-        <dependency>
-            <groupId>net.sf.jasperreports</groupId>
-            <artifactId>jasperreports-fonts</artifactId>
-            <version>6.0.0</version>
-        </dependency>
+       
          
         <dependency>
             <groupId>org.hibernate.orm</groupId>
@@ -426,7 +442,12 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-
+                <version>3.2.5</version> 
+                <configuration>
+                    <image>
+                        <name>comptabilite-app:latest</name>  
+                    </image>
+                </configuration>
             </plugin>
         </plugins>
     </build>

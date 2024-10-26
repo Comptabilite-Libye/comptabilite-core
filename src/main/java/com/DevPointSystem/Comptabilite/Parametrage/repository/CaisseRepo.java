@@ -20,7 +20,10 @@ public interface CaisseRepo extends JpaRepository<Caisse, Integer> {
 //      List<Caisse> findByCodeNotIn(Integer[] codes);
     List<Caisse> findByCodeNotAndCodeDevise(Integer code,Integer codeDevise);
 
-    List<Caisse> findByCodeTypeCaisse(Integer codeTypeCaisse);
+    List<Caisse> findByCodeTypeCaisse(Integer codeTypeCaisse);  
+    
+    List<Caisse> findByCodeDevise(Integer codeDevise);
+
 
     Caisse findByCode(Integer code);
 

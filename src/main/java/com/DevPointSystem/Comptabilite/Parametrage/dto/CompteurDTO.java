@@ -17,6 +17,8 @@ public class CompteurDTO {
     private String suffixe;
 
     private String compteur;
+    
+        private Integer niveau;
 
     public CompteurDTO() {
     }
@@ -52,5 +54,14 @@ public class CompteurDTO {
     public void setCompteur(String compteur) {
         this.compteur = compteur;
     }
+
+    public Integer getNiveau() {
+        return niveau;
+    }
+
+    public void setNiveau(Integer niveau) {
+        this.niveau = niveau;
+    }
+    
 
 }

@@ -27,38 +27,48 @@
 //        // TODO send this stack trace to an observability tool
 //        exception.printStackTrace();
 //
-//        if (exception instanceof BadCredentialsException) {
-//            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
-//            errorDetail.setProperty("description", "The username or password is incorrect");
-//
-//            return errorDetail;
-//        }
+////        if (exception instanceof BadCredentialsException) {
+////            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
+////            errorDetail.setProperty("description", "The username or password is incorrect");
+////
+////            return errorDetail;
+////        }
 //
 //        if (exception instanceof AccountStatusException) {
 //            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
 //            errorDetail.setProperty("description", "The account is locked");
 //        }
 //
-//        if (exception instanceof AccessDeniedException) {
-//            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-//            errorDetail.setProperty("description", "You are not authorized to access this resource");
-//        }
-//
-//        if (exception instanceof SignatureException) {
-//            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-//            errorDetail.setProperty("description", "The JWT signature is invalid");
-//        }
-//
-//        if (exception instanceof ExpiredJwtException) {
-//            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-//            errorDetail.setProperty("description", "Session Token has expired");
-//        }
-//
-//        if (errorDetail == null) {
-//            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), exception.getMessage());
-//            errorDetail.setProperty("description", "Unknown internal server error.");
-//        }
+////        if (exception instanceof AccessDeniedException) {
+////            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
+////            errorDetail.setProperty("description", "You are not authorized to access this resource");
+////        }
+////
+////        if (exception instanceof SignatureException) {
+////            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
+////            errorDetail.setProperty("description", "The JWT signature is invalid");
+////        }
+////
+////        if (exception instanceof ExpiredJwtException) {
+////            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
+////            errorDetail.setProperty("description", "Session Token has expired");
+////        }
+////
+////        if (errorDetail == null) {
+////            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), exception.getMessage());
+////            errorDetail.setProperty("description", "Unknown internal server error.");
+////        }
 //
 //        return errorDetail;
 //    }
+//    
+////     @ExceptionHandler(AccessDeniedException.class)
+////    @ResponseBody
+////    @ResponseStatus(HttpStatus.FORBIDDEN) // Set the status code to 403 Forbidden
+////    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
+////        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have permission to access this resource."); 
+////    }
+//
+//    
+//    
 //}

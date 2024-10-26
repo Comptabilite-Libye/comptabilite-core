@@ -4,6 +4,9 @@
  */
 package com.DevPointSystem.Comptabilite.Parametrage.service;
 
+import com.DevPointSystem.Comptabilite.Depense.domaine.FactureFournisseur;
+import com.DevPointSystem.Comptabilite.Depense.dto.FactureFournisseurDTO;
+import com.DevPointSystem.Comptabilite.Depense.factory.FactureFournisseurFactory;
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.Caisse;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.CaisseDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.factory.CaisseFactory;
@@ -70,14 +73,26 @@ public class CaisseService {
 //        return CaisseFactory.listCaisseToCaisseDTOs(caisseRepo.findByCodeNotInAndCodeDeviseIn(Helper.removeNullValueFromCollection(code,codeDevise)));
 //    }
 //    
-     @Transactional(readOnly = true)
-    public List<Caisse> findByCodeNotInAndCodeDevise(Integer code,Integer codeDevise ) {
-        return caisseRepo.findByCodeNotAndCodeDevise(code,codeDevise);
+    @Transactional(readOnly = true)
+    public List<Caisse> findByCodeNotInAndCodeDevise(Integer code, Integer codeDevise) {
+        return caisseRepo.findByCodeNotAndCodeDevise(code, codeDevise);
+    }
+//
+//    @Transactional(readOnly = true)
+//    public List<Caisse> findByCodeTypeCaisse(Integer codeTypeCaisse) {
+//        return caisseRepo.findByCodeTypeCaisse(codeTypeCaisse);
+//    }
+
+    @Transactional(readOnly = true)
+    public List<CaisseDTO> findByCodeTypeCaisse(Integer codeTypeCaisse) {
+        List<Caisse> result = caisseRepo.findByCodeTypeCaisse(codeTypeCaisse);
+        return CaisseFactory.listCaisseToCaisseDTOs(result);
     }
 
     @Transactional(readOnly = true)
-    public List<Caisse> findByCodeTypeCaisse(Integer codeTypeCaisse) {
-        return caisseRepo.findByCodeTypeCaisse(codeTypeCaisse);
+    public List<CaisseDTO> findByCodeDevise(Integer codeDevise) {
+        List<Caisse> result = caisseRepo.findByCodeDevise(codeDevise);
+        return CaisseFactory.listCaisseToCaisseDTOs(result);
     }
 
 //

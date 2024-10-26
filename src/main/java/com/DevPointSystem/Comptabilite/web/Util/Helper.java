@@ -7,7 +7,7 @@ package com.DevPointSystem.Comptabilite.web.Util;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.Row;
- 
+
 import org.springframework.util.ClassUtils;
 
 import javax.imageio.ImageIO;
@@ -26,22 +26,25 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 /**
  *
  * @author Administrator
  */
 public class Helper {
+
     private static ObjectMapper mapper = new ObjectMapper();
 
-//    public static String getUserAuthenticated() {
-//        String user;
-//        if (SecurityContextHolder.getContext().getAuthentication() != null) {
-//            user = SecurityContextHolder.getContext().getAuthentication().getName();
-//        } else {
-//            user = "anonymousUser";
-//        }
-//        return user;
-//    }
+    public static String getUserAuthenticated() {
+        String user;
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            user = SecurityContextHolder.getContext().getAuthentication().getName();
+        } else {
+            user = "anonymousUser";
+        }
+        return user;
+    }
 
     public static String incrementString(String suffix) {
 
@@ -51,6 +54,33 @@ public class Helper {
         String newsuffix = String.format(format, suffixint);
         return newsuffix;
     }
+
+//        public static Integer incrementIntegre(Integer suffix) {
+//
+//        Integer suffixint = Integer.parseInt(suffix);
+//        suffixint++;
+//        Integer format = "%0" + suffix.length() + "d";
+//        Integer newsuffix = Integer.max(format, suffixint);
+//        return newsuffix;
+//    }
+    public static int incrementInteger1(int suffix) {
+        return suffix + 1;
+    }
+
+    public static int incrementInteger100(int suffix) {
+        return suffix + 100;
+    }
+
+    public static int incrementInteger10000(int suffix) {
+        return suffix + 10000;
+    }
+    
+    
+    
+    public static int incrementInteger10000000(int suffix) {
+        return suffix + 10000000;
+    }
+    
 
     public static String generateSuffix(Integer codeLength, String prefix) {
 
@@ -180,8 +210,8 @@ public class Helper {
     public static <T, U> List<T> removeNullValueFromCollection(Collection<T> booleans) {
         return booleans.stream().filter(f -> f != null).collect(Collectors.toList());
     }
-    
-        public static <T, U> List<T> removeNullValueFromCollection(Collection<T> booleans , Collection<T> booleans2) {
+
+    public static <T, U> List<T> removeNullValueFromCollection(Collection<T> booleans, Collection<T> booleans2) {
         return booleans.stream().filter(f -> f != null).collect(Collectors.toList());
     }
 
@@ -213,7 +243,7 @@ public class Helper {
 //        return isEmpty;
 //    }
 
-    public static ObjectMapper kafkaMapper (){
+    public static ObjectMapper kafkaMapper() {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper;
     }
@@ -222,7 +252,7 @@ public class Helper {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> seen.add(keyExtractor.apply(t));
     }
-    
+
     public static String namesLookLike(String str, Boolean newDictionary) {
         if (newDictionary) {
             return str.replace(" ", "").replace(".", "").replace(",", "").replace(":", "").replace("''", "")

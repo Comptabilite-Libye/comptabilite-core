@@ -4,11 +4,15 @@
  */
 package com.DevPointSystem.Comptabilite.Parametrage.domaine;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -54,13 +58,19 @@ public class TypeDepense {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_Create", nullable = false)
     private Date dateCreate;
+    
+    
+    @JoinColumn(name = "code_categorie_depense", referencedColumnName = "Code", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private CategorieDepense categorieDepense;
+
+    @Column(name = "code_categorie_depense", updatable = false, insertable = false, nullable = false)
+    private Integer codeCategorieDepense;
 
     public TypeDepense() {
     }
-
-   
-    
-
+ 
     public Integer getCode() {
         return code;
     }
@@ -116,4 +126,24 @@ public class TypeDepense {
     public void setDateCreate(Date dateCreate) {
         this.dateCreate = dateCreate;
     }
+
+    public CategorieDepense getCategorieDepense() {
+        return categorieDepense;
+    }
+
+    public void setCategorieDepense(CategorieDepense categorieDepense) {
+        this.categorieDepense = categorieDepense;
+    }
+
+    public Integer getCodeCategorieDepense() {
+        return codeCategorieDepense;
+    }
+
+    public void setCodeCategorieDepense(Integer codeCategorieDepense) {
+        this.codeCategorieDepense = codeCategorieDepense;
+    }
+
+  
+    
+    
 }

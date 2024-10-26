@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -49,6 +50,18 @@ public class TypeDepenseRessource {
         return ResponseEntity.ok().body(typeDepenseService.findAllTypeDepense());
     }
 
+    
+    
+
+    @GetMapping("type_depense/findByCategorie")
+    public ResponseEntity<List<TypeDepenseDTO>> getAllTypeDepenseByCodeCategorie(@RequestParam Integer codeCategorieDepense) {
+//        List<DdeAchat> ddeAchatList = ddeAchatService.findAllDdeAchat();
+        return ResponseEntity.ok().body(typeDepenseService.findOneByCategorieDepense(codeCategorieDepense));
+    }
+
+        
+        
+        
     @PostMapping("type_depense")
     public ResponseEntity<TypeDepenseDTO> postTypeDepense(@Valid @RequestBody TypeDepenseDTO ddeTransfertDTO, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
         TypeDepenseDTO result = typeDepenseService.save(ddeTransfertDTO);

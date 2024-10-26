@@ -4,21 +4,64 @@
  */
 package com.DevPointSystem.Comptabilite.Authentification.Config;
 
-import java.util.Arrays;
+import com.DevPointSystem.Comptabilite.Authentification.Config.jwt.JwtAuthenticationEntryPoint;
+import com.DevPointSystem.Comptabilite.Authentification.Config.jwt.JwtRequestFilter;
+//import java.io.IOException;
+//import java.util.Arrays;
+//import javax.servlet.ServletException;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.security.authentication.AuthenticationProvider;
+//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+//import org.springframework.security.config.http.SessionCreationPolicy;
+//import org.springframework.security.web.SecurityFilterChain;
+//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+//import org.springframework.web.cors.CorsConfiguration;
+//import org.springframework.web.cors.CorsConfigurationSource;
+//import org.springframework.web.cors.UrlBasedCorsConfigurationSource;    
+//
+//import org.springframework.boot.web.servlet.FilterRegistrationBean;
+//import org.springframework.core.env.Environment;
+//import org.springframework.http.HttpMethod;
+//import org.springframework.http.HttpStatus;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.AuthenticationException;
+//import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+//import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+//import org.springframework.security.web.savedrequest.NullRequestCache;
+//import org.springframework.web.context.request.RequestContextHolder;
+//import org.springframework.web.filter.CorsFilter;
+
+import java.io.IOException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.security.web.savedrequest.NullRequestCache;
+import org.springframework.web.context.request.RequestContextHolder;
 
 /**
  *
@@ -28,48 +71,47 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    private final AuthenticationProvider authenticationProvider;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final Logger log = LoggerFactory.getLogger(SecurityConfiguration.class);
 
-    public SecurityConfiguration(
-            JwtAuthenticationFilter jwtAuthenticationFilter,
-            AuthenticationProvider authenticationProvider
-    ) {
-        this.authenticationProvider = authenticationProvider;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    private final Environment env;
+
+    public SecurityConfiguration(Environment env) {
+        this.env = env;
     }
 
+    @Autowired
+    private AuthenticationProvider authenticationProvider;
+
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
+ 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/**")
+//                .requestMatchers("/**")
+//                .permitAll()
+                 .requestMatchers("/api/auth/login")
                 .permitAll()
                 .requestMatchers("/api/**")
                 .authenticated()
+               
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    @Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration crosConfiguration = new CorsConfiguration();
-        crosConfiguration.setAllowCredentials(true);
-        crosConfiguration.setAllowedOrigins(Arrays.asList("*"));
-        crosConfiguration.setAllowedHeaders(Arrays.asList("*"));
-        crosConfiguration.setExposedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
-        crosConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", crosConfiguration);
-        return new CorsFilter(urlBasedCorsConfigurationSource);
-
-    }
- 
+//    @Bean
+//    HttpSessionStrategy sessionStrategy() {
+//        return new CustomHeaderHttpSessionStrategy();
+//    }
 }

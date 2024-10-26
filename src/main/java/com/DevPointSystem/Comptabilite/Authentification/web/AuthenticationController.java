@@ -8,14 +8,10 @@ import com.DevPointSystem.Comptabilite.Authentification.domaine.User;
 import com.DevPointSystem.Comptabilite.Authentification.dto.AccessUserDTO;
 import com.DevPointSystem.Comptabilite.Authentification.dto.LoginResponse;
 import com.DevPointSystem.Comptabilite.Authentification.dto.LoginUserDto;
-import com.DevPointSystem.Comptabilite.Authentification.dto.RegisterUserDto;
 import com.DevPointSystem.Comptabilite.Authentification.service.AccessUserService;
 import com.DevPointSystem.Comptabilite.Authentification.service.AuthenticationService;
 import com.DevPointSystem.Comptabilite.Authentification.service.JwtService;
 import com.DevPointSystem.Comptabilite.Authentification.service.UserDetailsImpl;
-import com.DevPointSystem.Comptabilite.Authentification.web.Request.AuthenticationRequest;
-import com.DevPointSystem.Comptabilite.Authentification.web.Response.AuthenticationResponse;
-import com.DevPointSystem.Comptabilite.Authentification.web.Response.MessageResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
@@ -23,6 +19,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 /**
  *
@@ -83,7 +80,7 @@ public class AuthenticationController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long userId = userDetails.getId();
 //    refreshTokenService.deleteByUserId(userId);
-        return ResponseEntity.ok(new MessageResponse("Log out successful!"));
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @GetMapping("/authen")

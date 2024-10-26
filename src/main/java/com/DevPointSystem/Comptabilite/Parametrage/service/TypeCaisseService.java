@@ -62,5 +62,7 @@ public class TypeCaisseService {
         Preconditions.checkArgument(typeCaisseRepo.existsById(code), "error.TypeCaisseNotFound");
         typeCaisseRepo.deleteById(code);
     }
+    
+    
 
 }

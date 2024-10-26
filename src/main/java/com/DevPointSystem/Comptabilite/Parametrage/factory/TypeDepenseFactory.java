@@ -6,6 +6,7 @@ package com.DevPointSystem.Comptabilite.Parametrage.factory;
 
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.TypeDepense;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.TypeDepenseDTO;
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class TypeDepenseFactory {
-     public static TypeDepense createTypeDepenseByCode(int code) {
+
+    public static TypeDepense createTypeDepenseByCode(int code) {
         TypeDepense domaine = new TypeDepense();
         domaine.setCode(code);
         return domaine;
@@ -27,12 +29,18 @@ public class TypeDepenseFactory {
             domaine.setCode(dto.getCode());
 
             domaine.setDesignationLt(dto.getDesignationLt());
-            domaine.setDesignationAr(dto.getDesignationAr());        
+            domaine.setDesignationAr(dto.getDesignationAr());
             domaine.setCodeSaisie(dto.getCodeSaisie());
 
             domaine.setActif(dto.isActif());
             domaine.setDateCreate(dto.getDateCreate());
             domaine.setUserCreate(dto.getUserCreate());
+
+            Preconditions.checkArgument(dto.getCodeCategorieDepense() != null, "error.CategorieDepenseRequired");
+            domaine.setCodeCategorieDepense(dto.getCodeCategorieDepense());
+            if (domaine.getCodeCategorieDepense() != null) {
+                domaine.setCategorieDepense(CategorieDepenseFactory.createCategorieDepenseByCode(dto.getCodeCategorieDepense()));
+            }
 
             return domaine;
         } else {
@@ -45,14 +53,21 @@ public class TypeDepenseFactory {
         if (domaine != null) {
             TypeDepenseDTO dto = new TypeDepenseDTO();
             dto.setCode(domaine.getCode());
+            dto.setDesignationArTypeDepense(domaine.getDesignationAr());
+            dto.setDesignationLtTypeDepense(domaine.getDesignationLt());
+            dto.setCodeSaisieTypeDepense(domaine.getCodeSaisie());
 
             dto.setDesignationAr(domaine.getDesignationAr());
+
             dto.setDesignationLt(domaine.getDesignationLt());
 
             dto.setCodeSaisie(domaine.getCodeSaisie());
             dto.setActif(domaine.isActif());
             dto.setDateCreate(domaine.getDateCreate());
             dto.setUserCreate(domaine.getUserCreate());
+
+            dto.setCategorieDepenseDTO(CategorieDepenseFactory.categorieDepenseToCategorieDepenseDTO(domaine.getCategorieDepense()));
+            dto.setCodeCategorieDepense(domaine.getCodeCategorieDepense());
 
             return dto;
         } else {

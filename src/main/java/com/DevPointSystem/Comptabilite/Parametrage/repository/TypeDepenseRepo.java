@@ -5,6 +5,7 @@
 package com.DevPointSystem.Comptabilite.Parametrage.repository;
  
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.TypeDepense;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +15,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface TypeDepenseRepo  extends JpaRepository<TypeDepense, Integer>{
-      TypeDepense findByCode(Integer code);
+      TypeDepense findByCode(Integer code);   
+      
+      List<TypeDepense> findByCodeCategorieDepense(Integer codeCategorieDepense);
+
 }

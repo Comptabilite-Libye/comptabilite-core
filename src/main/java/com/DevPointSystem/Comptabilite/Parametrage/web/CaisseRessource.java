@@ -10,6 +10,7 @@ import com.DevPointSystem.Comptabilite.Parametrage.service.CaisseService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import lombok.extern.slf4j.Slf4j;
@@ -61,10 +62,27 @@ public class CaisseRessource {
     public ResponseEntity<List<Caisse>> getAllCaisseByTypeCaisse(@RequestParam("code") Integer code, @RequestParam("codeDevise") Integer codeDevise) {
         return ResponseEntity.ok().body(caisseService.findByCodeNotInAndCodeDevise(code, codeDevise));
     }
-
+//
+//    @GetMapping("caisse/type_caisse/{codeTypeCaisse}")
+//    public ResponseEntity<List<Caisse>> getAllCaisseByTypeCaisse(@PathVariable("codeTypeCaisse") Integer codeTypeCaisse) {
+//        return ResponseEntity.ok().body(caisseService.findByCodeTypeCaisse(codeTypeCaisse));
+//    }
     @GetMapping("caisse/type_caisse/{codeTypeCaisse}")
-    public ResponseEntity<List<Caisse>> getAllCaisseByTypeCaisse(@PathVariable("codeTypeCaisse") Integer codeTypeCaisse) {
-        return ResponseEntity.ok().body(caisseService.findByCodeTypeCaisse(codeTypeCaisse));
+    public ResponseEntity<List<CaisseDTO>> getAllCaisseByTypeCaisse(@RequestParam Integer codeTypeCaisse) {
+        List<CaisseDTO> dTOs = caisseService.findByCodeTypeCaisse(codeTypeCaisse);
+        return ResponseEntity.ok().body(dTOs);
+    }
+    
+    
+
+//        @GetMapping("caisse/codeDevise")
+//    public ResponseEntity<List<Caisse>> getAllCaisseByCodeDevise(@RequestParam Integer codeDevise) {
+//        return ResponseEntity.ok().body(caisseService.findByCodeTypeCaisse(codeDevise));
+//    }
+    @GetMapping("caisse/codeDevise")
+    public ResponseEntity<List<CaisseDTO>> getAllCaisseByCodeDevise(@RequestParam Integer codeDevise) {
+        List<CaisseDTO> dTOs = caisseService.findByCodeDevise(codeDevise);
+        return ResponseEntity.ok().body(dTOs);
     }
 
     @PostMapping("caisse")

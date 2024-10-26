@@ -4,6 +4,7 @@
  */
 package com.DevPointSystem.Comptabilite.Parametrage.service;
 
+import com.DevPointSystem.Comptabilite.Parametrage.domaine.Compteur;
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.TypeDepense;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.TypeDepenseDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.factory.TypeDepenseFactory;
@@ -20,10 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class TypeDepenseService {
-     private final TypeDepenseRepo typeDepenseRepo;
 
-    public TypeDepenseService(TypeDepenseRepo typeDepenseRepo) {
+    private final TypeDepenseRepo typeDepenseRepo;
+    private final CompteurService compteurService;
+
+    public TypeDepenseService(TypeDepenseRepo typeDepenseRepo, CompteurService compteurService) {
         this.typeDepenseRepo = typeDepenseRepo;
+        this.compteurService = compteurService;
     }
 
     @Transactional(readOnly = true)
@@ -35,13 +39,26 @@ public class TypeDepenseService {
     @Transactional(readOnly = true)
     public TypeDepenseDTO findOne(Integer code) {
         TypeDepense domaine = typeDepenseRepo.findByCode(code);
-        Preconditions.checkArgument(domaine  != null, "error.TypeDepenseNotFound");
+        Preconditions.checkArgument(domaine != null, "error.TypeDepenseNotFound");
         return TypeDepenseFactory.typeDepenseToTypeDepenseDTO(domaine);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TypeDepenseDTO> findOneByCategorieDepense(Integer codeCategorieDepense) {
+        List<TypeDepense> domaine = typeDepenseRepo.findByCodeCategorieDepense(codeCategorieDepense);
+        Preconditions.checkArgument(domaine != null, "error.TypeDepenseNotFound");
+        return TypeDepenseFactory.listTypeDepenseToTypeDepenseDTOs(domaine);
     }
 
 //
     public TypeDepenseDTO save(TypeDepenseDTO dto) {
         TypeDepense domaine = TypeDepenseFactory.typeDepenseDTOToTypeDepense(dto, new TypeDepense());
+
+        Compteur CompteurCodeSaisie = compteurService.findOne("CodeSaisieTP");
+        String codeSaisieAC = CompteurCodeSaisie.getPrefixe() + CompteurCodeSaisie.getSuffixe();
+        domaine.setCodeSaisie(codeSaisieAC);
+        compteurService.incrementeSuffixe(CompteurCodeSaisie);
+
         domaine = typeDepenseRepo.save(domaine);
         return TypeDepenseFactory.typeDepenseToTypeDepenseDTO(domaine);
     }
