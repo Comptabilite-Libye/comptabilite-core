@@ -57,6 +57,36 @@ public class DetailsReglementFactureFrsPK {
         this.codeCategorieDepense = codeCategorieDepense;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + this.codeReglementFactureFournisseur;
+        hash = 29 * hash + this.codeTypeDepense;
+        hash = 29 * hash + this.codeCategorieDepense;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DetailsReglementFactureFrsPK other = (DetailsReglementFactureFrsPK) obj;
+        if (this.codeReglementFactureFournisseur != other.codeReglementFactureFournisseur) {
+            return false;
+        }
+        if (this.codeTypeDepense != other.codeTypeDepense) {
+            return false;
+        }
+        return this.codeCategorieDepense == other.codeCategorieDepense;
+    }
+
     
     
 }

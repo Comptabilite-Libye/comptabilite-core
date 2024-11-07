@@ -59,7 +59,7 @@ public class AccessUserService {
     }
 
     @Transactional(readOnly = true)
-    public AccessUserDTO findOneByCode(Integer id) {
+    public AccessUserDTO findOneByCode(Long id) {
         User domaine = accessUserRepo.getReferenceById(id);
         Preconditions.checkArgument(domaine !=null, "UserName.NotFound");
         AccessUserDTO dto = AccessUserFactory.accessUserToAccessUserDTO(domaine, false);
@@ -67,14 +67,14 @@ public class AccessUserService {
     }
 
     @Transactional(readOnly = true)
-    public AccessUserDTO findOneWithOutLogo(Integer id, Boolean withoutLogo) {
+    public AccessUserDTO findOneWithOutLogo(Long id, Boolean withoutLogo) {
         User societe = accessUserRepo.getReferenceById(id);
         RestPreconditions.checkFound(societe, "UserName.NotFound");
         AccessUserDTO dto = AccessUserFactory.accessUserToAccessUserDTO(societe, withoutLogo);
         return dto;
     }
 
-    public void deleteUSerName(Integer code) {
+    public void deleteUSerName(Long code) {
         accessUserRepo.deleteById(code);
     }
 

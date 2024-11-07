@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * @author Administrator
  */
 @Repository
-public interface AccessUserRepo extends JpaRepository<User, Integer> {
+public interface AccessUserRepo extends JpaRepository<User, Long> {
 
     User findFirstBy();
 //    AccessUser findAccessUserByUserName(String UserName);

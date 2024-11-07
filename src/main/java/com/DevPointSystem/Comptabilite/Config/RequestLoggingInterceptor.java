@@ -55,6 +55,7 @@ public class RequestLoggingInterceptor implements ClientHttpRequestInterceptor {
             throws IOException {
         ClientHttpResponse response = null;
         try {
+
             if (RequestContextHolder.getRequestAttributes() != null) {
                 String token = RequestContextHolder.getRequestAttributes().getSessionId();
                 String lang = LocaleContextHolder.getLocale().getLanguage();
@@ -62,7 +63,7 @@ public class RequestLoggingInterceptor implements ClientHttpRequestInterceptor {
                     request.getHeaders().add("Authorization", "Bearer " + token);
                     System.out.println("com.DevPointSystem.Comptabilite.Config.RequestLoggingInterceptor.intercept()" + token);
                 }
-//                request.getHeaders().set("x-auth-token", "989410f6-eb7b-45da-b75b-544d86f489f2");
+                // request.getHeaders().set("x-auth-token", "989410f6-eb7b-45da-b75b-544d86f489f2");
                 if (request.getHeaders().get("Accept-language") == null) {
                     request.getHeaders().add("Accept-language", lang);
                 }
@@ -71,9 +72,13 @@ public class RequestLoggingInterceptor implements ClientHttpRequestInterceptor {
             traceRequest(request, body);
             response = execution.execute(request, body);
             traceResponse(response);
-            if (response.getRawStatusCode() != 200 && response.getRawStatusCode() != 201) {
+            int statusCodeValue = response.getStatusCode().value();
+
+            if (statusCodeValue != 200 && statusCodeValue != 201) {
+            
                 throw new Exception();
             }
+
             return response;
         } catch (Exception e) {
             log.error("-----------------------------Begin Communication Trace Error------------------------------------");
@@ -148,19 +153,20 @@ public class RequestLoggingInterceptor implements ClientHttpRequestInterceptor {
     }
 
     private void shouldThrowIllegalBusinessException(ClientHttpResponse response, String responseBody) throws IOException {
-        if (response.getRawStatusCode() == 409) {
+           int statusCodeValue = response.getStatusCode().value();
+        if (statusCodeValue == 409) {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode error = mapper.readTree(responseBody);
             String description = error.get("description").asText();
             throw new IllegalBusinessLogiqueException(description);
         }
-        if (response.getRawStatusCode() == 403) {
+        if (statusCodeValue == 403) {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode error = mapper.readTree(responseBody);
             String description = error.get("message").asText();
             throw new IllegalBusinessLogiqueException(description);
         }
-        if (response.getRawStatusCode() == 401) {
+        if (statusCodeValue == 401) {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode error = mapper.readTree(responseBody);
             String description = error.get("message").asText();

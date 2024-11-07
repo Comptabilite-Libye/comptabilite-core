@@ -1,3 +1,3 @@
-FROM adoptopenjdk/openjdk17:alpine-jre
-ADD target/springboot-crud-api-0.0.1-SNAPSHOT.jar app.jar
+FROM eclipse-temurin:17-jre-alpine
+ADD target/Comptabilite-0.0.1-SNAPSHOT.jar app.jar
 ENTRYPOINT ["java","-jar","app.jar"]

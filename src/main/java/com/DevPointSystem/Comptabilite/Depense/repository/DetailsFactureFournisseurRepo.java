@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 public interface DetailsFactureFournisseurRepo extends JpaRepository<DetailsFactureFournisseur, DetailsFactureFournisseurPK> {
 
     Collection<DetailsFactureFournisseur> findByDetailsFactureFournisseurPK_codeFactureFournisseur(Integer codeFactureFournisseur);
+ 
 
     @Modifying
     @Query("delete from DetailsFactureFournisseur det where det.detailsFactureFournisseurPK.codeFactureFournisseur=?1 ")

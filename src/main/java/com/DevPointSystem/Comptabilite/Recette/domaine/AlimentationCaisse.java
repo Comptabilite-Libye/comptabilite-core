@@ -94,7 +94,7 @@ public class AlimentationCaisse {
     private Integer codeEtatApprouver;
 
     @Column(name = "code_user_approuver", columnDefinition = "Nvarchar(200) default ''")
-    private Integer codeUserApprouver;
+    private Long codeUserApprouver;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_approuve", columnDefinition = "datetime default(getdate())")
@@ -219,11 +219,11 @@ public class AlimentationCaisse {
         this.codeEtatApprouver = codeEtatApprouver;
     }
 
-    public Integer getCodeUserApprouver() {
+    public Long getCodeUserApprouver() {
         return codeUserApprouver;
     }
 
-    public void setCodeUserApprouver(Integer codeUserApprouver) {
+    public void setCodeUserApprouver(Long codeUserApprouver) {
         this.codeUserApprouver = codeUserApprouver;
     }
 

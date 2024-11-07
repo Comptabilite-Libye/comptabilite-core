@@ -233,6 +233,12 @@
          <version>5.3.4.RELEASE</version>
          <type>jar</type>
         </dependency>-->
+        <!--        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-core</artifactId>
+            <version>5.1.0</version>
+            <type>jar</type>
+        </dependency>-->
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
@@ -263,6 +269,8 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>0.11.5</version>
         </dependency>
+       
+           
   
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -435,17 +443,44 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-                      
+        
+<!--        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-apt</artifactId>
+            <version>5.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-jpa</artifactId>
+            <version>5.1.0</version>
+        </dependency>-->
+
+        <!-- For Hibernate 6+ (adjust if using older Hibernate) -->
+        <!--        <dependency>
+<groupId>com.querydsl</groupId>
+<artifactId>querydsl-hibernate-jpa-codegen</artifactId>
+<version>5.1.0</version>
+</dependency>
+        -->
     </dependencies>
     <build>
         <plugins>
+            
+             
+        
+        
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>3.2.5</version> 
                 <configuration>
                     <image>
-                        <name>comptabilite-app:latest</name>  
+                        <name>soufien54328336/comptabilte-core:${project.version}</name>  
+                        <env>
+                            <BP_JVM_VERSION>21.0.3</BP_JVM_VERSION>
+                            <BP_JVM_CDS_ENABLED>true</BP_JVM_CDS_ENABLED>
+                        </env>
                     </image>
                 </configuration>
             </plugin>

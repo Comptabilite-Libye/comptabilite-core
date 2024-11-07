@@ -45,7 +45,7 @@ public class AlimentationCaisseDTO {
 
     private EtatApprouverDTO etatApprouverDTO;
     private Integer codeEtatApprouver;
-    private Integer codeUserApprouver;
+    private Long codeUserApprouver;
     private Date dateApprouve;
     private Integer designationEtatApprouve;
 
@@ -164,11 +164,11 @@ public class AlimentationCaisseDTO {
         this.codeEtatApprouver = codeEtatApprouver;
     }
 
-    public Integer getCodeUserApprouver() {
+    public Long getCodeUserApprouver() {
         return codeUserApprouver;
     }
 
-    public void setCodeUserApprouver(Integer codeUserApprouver) {
+    public void setCodeUserApprouver(Long codeUserApprouver) {
         this.codeUserApprouver = codeUserApprouver;
     }
 

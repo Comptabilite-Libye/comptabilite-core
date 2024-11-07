@@ -59,7 +59,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         final String requestUri = request.getServletPath();
 
         String username = null;
-        String jwtToken = null;
+        String jwtToken = null; 
+        
+     
 
         if (requestUri.equals("/api/auth/login")) {
             chain.doFilter(request, response);
@@ -86,30 +88,35 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                             try {
                                 // Proceed with the request
                                 chain.doFilter(request, response);
+//                                System.out.println("V1");
                             } catch (Exception e) {
+//                                    System.out.println("V2");
                                 // Catch exceptions thrown by chain.doFilter()
                                 if (e instanceof DataIntegrityViolationException) {
+//                                        System.out.println("V3");
                                     // Handle database constraint violations
                                     logger.warn("Data integrity violation: " + e.getMessage());
                                     sendErrorResponse(response, HttpStatus.BAD_REQUEST, "Invalid data");
                                     return;
                                 } else {
+//                                        System.out.println("V4");
                                     // Handle other exceptions (potentially server errors)
                                     logger.error("Error processing request: " + e.getMessage());
                                     sendErrorResponse(response, HttpStatus.CONFLICT, "CONFLICT Error");
                                     return;
-                                }
+                                } 
                             }
-
+//                               System.out.println("V5");
                             // Only proceed with the request if the token is valid
                             return; // Stop processing the request
                         } else {
+//                                System.out.println("V6");
                             // Token is not valid (expired or invalid)
                             logger.warn("JWT Token is not valid: " + jwt);
                             sendErrorResponse(response, HttpStatus.FORBIDDEN, "Token is not valid");
                             return; // Stop processing the request
                         }
-
+                         
                     } else {
                         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                             if (jwtTokenUtil.validateToken(jwtToken)) {
@@ -179,19 +186,20 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private void shouldThrowIllegalBusinessException(ClientHttpResponse response, String responseBody) throws IOException {
-        if (response.getRawStatusCode() == 409) {
+        int statusCodeValue = response.getStatusCode().value();
+        if (statusCodeValue == 409) {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode error = mapper.readTree(responseBody);
             String description = error.get("description").asText();
             throw new IllegalBusinessLogiqueException(description);
         }
-        if (response.getRawStatusCode() == 403) {
+        if (statusCodeValue == 403) {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode error = mapper.readTree(responseBody);
             String description = error.get("message").asText();
             throw new IllegalBusinessLogiqueException(description);
         }
-        if (response.getRawStatusCode() == 401) {
+        if (statusCodeValue == 401) {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode error = mapper.readTree(responseBody);
             String description = error.get("message").asText();

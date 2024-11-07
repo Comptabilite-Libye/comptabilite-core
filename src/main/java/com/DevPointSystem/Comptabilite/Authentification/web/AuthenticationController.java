@@ -122,7 +122,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/accessUser/{UserName}/sginature")
-    public ResponseEntity<Resource> getSignature(@PathVariable Integer code) {
+    public ResponseEntity<Resource> getSignature(@PathVariable Long code) {
         AccessUserDTO dto = accessUserService.findOneByCode(code);
 
         Resource ressource = new ByteArrayResource(dto.getSignature());

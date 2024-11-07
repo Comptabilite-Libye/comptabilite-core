@@ -4,22 +4,21 @@
  */
 package com.DevPointSystem.Comptabilite.Depense.web;
 
-import com.DevPointSystem.Comptabilite.Authentification.dto.AccessUserDTO;
 import com.DevPointSystem.Comptabilite.Authentification.service.AccessUserService;
 import com.DevPointSystem.Comptabilite.Depense.domaine.FactureFournisseur;
-import com.DevPointSystem.Comptabilite.Depense.dto.DetailsFactureFournisseurDTO;
 import com.DevPointSystem.Comptabilite.Depense.dto.FactureFournisseurDTO;
 import com.DevPointSystem.Comptabilite.Depense.service.FactureFournisseurService;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.SocieteDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.paramDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.service.ParamService;
 import com.DevPointSystem.Comptabilite.Parametrage.service.SocieteService;
-import com.google.common.base.Preconditions;
 import jakarta.validation.Valid;
 import java.io.ByteArrayOutputStream;
+import static java.lang.StrictMath.log;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,11 +28,15 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimplePdfReportConfiguration;
+import static org.codehaus.groovy.ast.tools.GeneralUtils.params;
+import static org.springframework.data.redis.serializer.RedisSerializationContext.java;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -51,7 +54,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import net.sf.jasperreports.engine.design.JasperDesign;
+import static org.springframework.web.servlet.function.RequestPredicates.headers;
 
 /**
  *
@@ -90,15 +93,29 @@ public class FactureFournisseurRessource {
         Collection<FactureFournisseurDTO> dTOs = factureFournisseurService.findByCodeFournisseur(codeFournisseur);
         return ResponseEntity.ok().body(dTOs);
     }
-    
-        @GetMapping("facture_fournisseur/factureBy")
-    public ResponseEntity<Collection<FactureFournisseurDTO>> getFactureFournisseurByCodeCaisse(@RequestParam Integer codeFournisseur ,@RequestParam Integer codeDevise,@RequestParam Boolean Paid ) {
-        Collection<FactureFournisseurDTO> dTOs = factureFournisseurService.findByCodeFournisseurAndCodeDeviseAndNotPaid(codeFournisseur,codeDevise,Paid);
+
+    @GetMapping("facture_fournisseur/factureBy")
+    public ResponseEntity<Collection<FactureFournisseurDTO>> getFactureFournisseurByCodeCaisse(@RequestParam Integer codeFournisseur, @RequestParam Integer codeDevise, @RequestParam Boolean hasOrdrePaiement) {
+        Collection<FactureFournisseurDTO> dTOs = factureFournisseurService.findByCodeFournisseurAndCodeDeviseAndNotPaid(codeFournisseur, codeDevise, hasOrdrePaiement);
         return ResponseEntity.ok().body(dTOs);
     }
-    
-    
-    
+
+    @GetMapping("facture_fournisseur/factureForPaied")
+    public ResponseEntity<Collection<FactureFournisseurDTO>> getFactureFournisseurForPaid(@RequestParam Integer codeFournisseur, @RequestParam Integer codeDevise, @RequestParam Boolean hasOrdrePaiement, @RequestParam Integer codeEtatApprouver) {
+        Collection<FactureFournisseurDTO> dTOs = factureFournisseurService.findByCodeFournisseurAndCodeDeviseAndNotPaidAndApprouved(codeFournisseur, codeDevise, hasOrdrePaiement, codeEtatApprouver);
+        return ResponseEntity.ok().body(dTOs);
+    }
+
+    @GetMapping("facture_fournisseur/neww/{HasOrdrePaiement}")
+    public ResponseEntity<Collection<FactureFournisseurDTO>> getFactureFournisseurNew(
+            @PathVariable Boolean HasOrdrePaiement,
+            @RequestParam Date DateDebut,
+            @RequestParam Date DateFin
+    ) {
+
+        Collection<FactureFournisseurDTO> rslt = factureFournisseurService.findOneCollection(HasOrdrePaiement, DateDebut, DateFin);
+        return ResponseEntity.ok().body(rslt);
+    }
 
     @GetMapping("facture_fournisseur/codeDevise")
     public ResponseEntity<Collection<FactureFournisseurDTO>> getFactureFournisseurByCodeDevise(@RequestParam Collection<Integer> codeDevise) {
@@ -113,17 +130,19 @@ public class FactureFournisseurRessource {
 
     }
 
+    @GetMapping("facture_fournisseur/LazyEtatApprouver/{codeEtatApprouver}")
+    public ResponseEntity<List<FactureFournisseurDTO>> getAppelOffreByCodeEtatApprouveLazy(@PathVariable Integer codeEtatApprouver) {
+        List<FactureFournisseurDTO> dto = factureFournisseurService.findByEtatApprouverLazy(codeEtatApprouver);
+        return ResponseEntity.ok().body(dto);
+
+    }
+
     @PostMapping("facture_fournisseur")
     public ResponseEntity<FactureFournisseurDTO> postFactureFournisseur(@Valid @RequestBody FactureFournisseurDTO dTO, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
         FactureFournisseurDTO result = factureFournisseurService.save(dTO);
         return ResponseEntity.created(new URI("/api/parametrage/" + result.getCode())).body(result);
     }
 
-//    @PutMapping("facture_fournisseur/update")
-//    public ResponseEntity<FactureFournisseurDTO> updateFactureFournisseur(@Valid @RequestBody FactureFournisseurDTO dto, BindingResult bindingResult) throws MethodArgumentNotValidException {
-//        FactureFournisseurDTO result = factureFournisseurService.update(dto);
-//        return ResponseEntity.ok().body(result);
-//    }
     @PutMapping("facture_fournisseur/update")
     public ResponseEntity<FactureFournisseurDTO> updateFactureFournisseur(@Valid @RequestBody FactureFournisseurDTO dTO, BindingResult bindingResult) throws MethodArgumentNotValidException {
         FactureFournisseurDTO result = factureFournisseurService.updateNewWithFlush(dTO);
@@ -148,59 +167,137 @@ public class FactureFournisseurRessource {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-//    @GetMapping("facture_fournisseur/edition/{code}")
-//    public ResponseEntity<byte[]> getReport(@PathVariable Integer code) throws Exception {
-//
-//        Collection<DetailsFactureFournisseurDTO> dto = factureFournisseurService.findOneWithDetails(code);
-//
-//        String fileNameJrxml = "src/main/resources/Reports/AlimentCaisse.jrxml";
-//        paramDTO dTOs = paramService.findParamByCodeParamS("NomSociete");
-//        FactureFournisseurDTO rslt = factureFournisseurService.findOne(code);
-//
-//        Preconditions.checkArgument(rslt.getCodeUserApprouver() !=null, "error.User.Approuve.Found");
-//        AccessUserDTO getsignature = accessUserService.findOneByCode(rslt.getCodeUserApprouver());
-//
-//        SocieteDTO societeDTO = societeService.findOne(1);
-//        JasperDesign jasperDesign = JRXmlLoader.load(fileNameJrxml);
-//        JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
-//        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//
-//        Map<String, Object> params = new HashMap<>();
-//        params.put("ItemDataSource", new JRBeanCollectionDataSource(dto));
-//        params.put("UserCreate", auth.getName());
-//        params.put("CodeSaisie", rslt.getCodeSaisie());
-//        params.put("societe", dTOs.getValeur());
-//        params.put("devise", rslt.getDeviseDTO().getDesignationAr());
-//        params.put("typeRecette", rslt.getDetailsFactureFournisseurDTOs().iterator().next().getDesignationArTypeRecette());
-//        params.put("caisse", rslt.getCaisseDTO().getDesignationAr());
-//        params.put("modeReglement", rslt.getModeReglementDTO().getDesignationAr());
-//        params.put("montant", rslt.getMontant());
-//        params.put("montantEnDevise", rslt.getMontantEnDevise());
-//        params.put("tauxChange", rslt.getTauxChange());
-//        params.put("observation", rslt.getObservation());
-//        params.put("dateCreate", rslt.getDateCreate());
-//        params.put("designationEtatApprouve", rslt.getEtatApprouverDTO().getDesignation());
-//
-//        params.put("logo", societeDTO.getLogo());
-//        params.put("signature", getsignature.getSignature());
-//
-//        JasperPrint print = JasperFillManager.fillReport(jasperReport, params, new JREmptyDataSource());
-//        JRPdfExporter exporter = new JRPdfExporter();
-//        ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
-//        exporter.setExporterInput(new SimpleExporterInput(print));
-//        exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(pdfOutputStream));
-//        SimplePdfReportConfiguration reportConfig = new SimplePdfReportConfiguration();
-//        reportConfig.setSizePageToContent(true);
-//        reportConfig.setForceLineBreakPolicy(false);
-//        exporter.exportReport();
-//        var res = pdfOutputStream.toByteArray();
-//        var headers = new HttpHeaders();
-//        headers.add("Content-Disposition", "inline; filename= filename.pdf");
-//        return ResponseEntity
-//                .ok()
-//                .headers(headers)
-//                .contentType(MediaType.APPLICATION_PDF)
-//                .body(res);
-//    }
+    @GetMapping("facture_fournisseur/edition")
+    public ResponseEntity<byte[]> getReport(
+            @RequestParam Boolean Paid,
+            @RequestParam Date dateDebut,
+            @RequestParam Date dateFin
+    ) throws Exception {
+        String fileNameJrxml = "src/main/resources/Reports/ListFactureFournisseur.jrxml";
+        paramDTO dTOs = paramService.findParamByCodeParamS("NomSociete");
+        Collection<FactureFournisseurDTO> rslt = factureFournisseurService.findOneCollection(Paid, dateDebut, dateFin);
 
+        SocieteDTO societeDTO = societeService.findOne(1);
+        JasperDesign jasperDesign = JRXmlLoader.load(fileNameJrxml);
+        JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+//        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        String userName = "Anonymous";
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() != null) {
+            userName = auth.getName();
+        }
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("ItemDataSource", new JRBeanCollectionDataSource(rslt));
+        params.put("societe", dTOs.getValeur());
+        params.put("logo", societeDTO.getLogo());
+
+        if (rslt.iterator().next().getHasOrdrePaiement() == true) {
+            params.put("hasOP", "المسددة");
+        } else {
+            params.put("hasOP", "غير المسددة");
+        }
+
+        params.put("UserCreate", userName);
+        params.put("DateDebut", dateDebut);
+        params.put("DateFin", dateFin);
+
+        params.put("codeSaisie", rslt.iterator().next().getCodeSaisie());
+        params.put("designationArDevise", rslt.iterator().next().getDeviseDTO().getDesignationAr());
+        params.put("dateFactureFournisseur", rslt.iterator().next().getDateFactureFournisseur());
+        params.put("numFactureFournisseur", rslt.iterator().next().getNumFactureFournisseur());
+        params.put("userCreate", rslt.iterator().next().getUserCreate());
+        params.put("montant", rslt.iterator().next().getMontant());
+        params.put("dateCreate", rslt.iterator().next().getDateCreate());
+
+        JasperPrint print = JasperFillManager.fillReport(jasperReport, params, new JREmptyDataSource());
+        JRPdfExporter exporter = new JRPdfExporter();
+        ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
+        exporter.setExporterInput(new SimpleExporterInput(print));
+        exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(pdfOutputStream));
+        SimplePdfReportConfiguration reportConfig = new SimplePdfReportConfiguration();
+        reportConfig.setSizePageToContent(true);
+        reportConfig.setForceLineBreakPolicy(false);
+        exporter.exportReport();
+        var res = pdfOutputStream.toByteArray();
+        var headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename= filename.pdf");
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(res);
+    }
+//
+//    @GetMapping("facture_fournisseur/editions")
+//    public ResponseEntity<?> getReports( // Return ResponseEntity<?> for more flexibility
+//            @RequestParam Date dateDebut,
+//            @RequestParam Date dateFin,
+//            @RequestParam Boolean hasOrdrePaiement // Consistent naming
+//    ) {
+//        try {
+//            // ... (your existing code to get userName, dTOs, societeDTO)
+//            String fileNameJrxml = "src/main/resources/Reports/ListFactureFournisseur.jrxml";
+//            paramDTO dTOs = paramService.findParamByCodeParamS("NomSociete");
+//            Collection<FactureFournisseurDTO> rslt = factureFournisseurService.findOneCollection(dateDebut, dateFin, hasOrdrePaiement);
+//
+//            SocieteDTO societeDTO = societeService.findOne(1);
+//            JasperDesign jasperDesign = JRXmlLoader.load(fileNameJrxml);
+//            JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+////        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//
+////            Collection<FactureFournisseurDTO> rslt = factureFournisseurService.findOneCollection(dateDebut, dateFin, hasOrdrePaiement);
+//            if (rslt.isEmpty()) {
+//                return ResponseEntity.noContent().build(); // Handle empty result set
+//            }
+//
+//            String userName = "Anonymous";
+//            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//            if (auth != null && auth.getPrincipal() != null) {
+//                userName = auth.getName();
+//            }
+//
+//            Map<String, Object> params = new HashMap<>();
+//            params.put("ItemDataSource", new JRBeanCollectionDataSource(rslt));
+//            params.put("societe", dTOs.getValeur());
+//            params.put("logo", societeDTO.getLogo());
+//
+//            params.put("UserCreate", userName);
+//            params.put("dateDebut", "01/01/2024");
+//            params.put("dateFin", "01/05/2024");
+//
+//            params.put("codeSaisie", "lllll");
+//
+//            params.put("designationArDevise", "lllll");
+//            params.put("dateFactureFrs", "lllll");
+//            params.put("numFactureFrs", "lllll");
+//            params.put("userCreate", "lllll");
+//            params.put("montant", "lllll");
+//
+//            JasperPrint print = JasperFillManager.fillReport(jasperReport, params, new JREmptyDataSource());
+//            JRPdfExporter exporter = new JRPdfExporter();
+//            ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
+//            exporter.setExporterInput(new SimpleExporterInput(print));
+//            exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(pdfOutputStream));
+//            SimplePdfReportConfiguration reportConfig = new SimplePdfReportConfiguration();
+//            reportConfig.setSizePageToContent(true);
+//            reportConfig.setForceLineBreakPolicy(false);
+//            exporter.exportReport();
+//            var res = pdfOutputStream.toByteArray();
+//            var headers = new HttpHeaders();
+//            headers.add("Content-Disposition", "inline; filename= filename.pdf");
+//
+//            return ResponseEntity
+//                    .ok()
+//                    .headers(headers)
+//                    .contentType(MediaType.APPLICATION_PDF)
+//                    .body(res);
+//
+//        } catch (Exception e) {
+////            log.error("Error generating report", e); // Proper logging
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Error generating report: " + e.getMessage()); // Informative error response
+//        }
+//    }
 }

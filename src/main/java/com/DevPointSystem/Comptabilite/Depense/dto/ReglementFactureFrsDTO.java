@@ -4,14 +4,6 @@
  */
 package com.DevPointSystem.Comptabilite.Depense.dto;
 
-import com.DevPointSystem.Comptabilite.Depense.domaine.DetailsReglementFactureFrs;
-import com.DevPointSystem.Comptabilite.Parametrage.domaine.Banque;
-import com.DevPointSystem.Comptabilite.Parametrage.domaine.Caisse;
-import com.DevPointSystem.Comptabilite.Parametrage.domaine.CostProfitCentre;
-import com.DevPointSystem.Comptabilite.Parametrage.domaine.Devise;
-import com.DevPointSystem.Comptabilite.Parametrage.domaine.EtatApprouver;
-import com.DevPointSystem.Comptabilite.Parametrage.domaine.Fournisseur;
-import com.DevPointSystem.Comptabilite.Parametrage.domaine.ModeReglement;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.BanqueDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.CaisseDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.CostProfitCentreDTO;
@@ -19,17 +11,6 @@ import com.DevPointSystem.Comptabilite.Parametrage.dto.DeviseDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.EtatApprouverDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.FournisseurDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.dto.ModeReglementDTO;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
@@ -39,8 +20,8 @@ import java.util.Date;
  * @author Administrator
  */
 public class ReglementFactureFrsDTO {
-    
-     private Integer code;
+
+    private Integer code;
 
     private String codeSaisie;
 
@@ -62,7 +43,7 @@ public class ReglementFactureFrsDTO {
 
     private Integer codeEtatApprouver;
 
-    private Integer codeUserApprouver;
+    private Long codeUserApprouver;
 
     private Date dateApprouve;
 
@@ -83,10 +64,25 @@ public class ReglementFactureFrsDTO {
     private Integer codeBanque;
 
     private String numPiece;
-     
+
     private CaisseDTO caisseDTO;
- 
+
     private Integer codeCaisse;
+
+    private FactureFournisseurDTO factureFournisseurDTO;
+
+    private Integer codeFactureFournisseur;
+
+    private BigDecimal montantEnDevise;
+
+    private BigDecimal tauxDevise;
+    
+    private Integer oldEtatApprouve;
+        private String typeOP;
+        
+            private BigDecimal montantAvance;
+            
+        
 
     public ReglementFactureFrsDTO() {
     }
@@ -179,11 +175,11 @@ public class ReglementFactureFrsDTO {
         this.codeEtatApprouver = codeEtatApprouver;
     }
 
-    public Integer getCodeUserApprouver() {
+    public Long getCodeUserApprouver() {
         return codeUserApprouver;
     }
 
-    public void setCodeUserApprouver(Integer codeUserApprouver) {
+    public void setCodeUserApprouver(Long codeUserApprouver) {
         this.codeUserApprouver = codeUserApprouver;
     }
 
@@ -203,7 +199,6 @@ public class ReglementFactureFrsDTO {
         this.detailsReglementFactureFrsDTOs = detailsReglementFactureFrsDTOs;
     }
 
-   
     public BigDecimal getMontant() {
         return montant;
     }
@@ -283,7 +278,63 @@ public class ReglementFactureFrsDTO {
     public void setCodeCaisse(Integer codeCaisse) {
         this.codeCaisse = codeCaisse;
     }
-    
+
+    public FactureFournisseurDTO getFactureFournisseurDTO() {
+        return factureFournisseurDTO;
+    }
+
+    public void setFactureFournisseurDTO(FactureFournisseurDTO factureFournisseurDTO) {
+        this.factureFournisseurDTO = factureFournisseurDTO;
+    }
+
+    public Integer getCodeFactureFournisseur() {
+        return codeFactureFournisseur;
+    }
+
+    public void setCodeFactureFournisseur(Integer codeFactureFournisseur) {
+        this.codeFactureFournisseur = codeFactureFournisseur;
+    }
+
+    public BigDecimal getMontantEnDevise() {
+        return montantEnDevise;
+    }
+
+    public void setMontantEnDevise(BigDecimal montantEnDevise) {
+        this.montantEnDevise = montantEnDevise;
+    }
+
+    public BigDecimal getTauxDevise() {
+        return tauxDevise;
+    }
+
+    public void setTauxDevise(BigDecimal tauxDevise) {
+        this.tauxDevise = tauxDevise;
+    }
+
+    public Integer getOldEtatApprouve() {
+        return oldEtatApprouve;
+    }
+
+    public void setOldEtatApprouve(Integer oldEtatApprouve) {
+        this.oldEtatApprouve = oldEtatApprouve;
+    }
+
+    public String getTypeOP() {
+        return typeOP;
+    }
+
+    public void setTypeOP(String typeOP) {
+        this.typeOP = typeOP;
+    }
+
+    public BigDecimal getMontantAvance() {
+        return montantAvance;
+    }
+
+    public void setMontantAvance(BigDecimal montantAvance) {
+        this.montantAvance = montantAvance;
+    }
+
     
     
 }

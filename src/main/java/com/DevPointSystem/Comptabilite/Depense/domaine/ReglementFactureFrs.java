@@ -75,6 +75,10 @@ public class ReglementFactureFrs {
     @Column(name = "observation", length = 200, nullable = false, columnDefinition = "nvarchar(max)")
     private String observation;
 
+    @Size(max = 2)
+    @Column(name = "TypeOP", length = 2, nullable = false, columnDefinition = "varchar(2)")
+    private String typeOP;
+
     @JoinColumn(name = "code_devise", referencedColumnName = "Code", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JsonBackReference
@@ -92,7 +96,7 @@ public class ReglementFactureFrs {
     private Integer codeEtatApprouver;
 
     @Column(name = "code_user_approuver", columnDefinition = "Nvarchar(200) default ''")
-    private Integer codeUserApprouver;
+    private Long codeUserApprouver;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_approuve", columnDefinition = "datetime ")
@@ -103,6 +107,15 @@ public class ReglementFactureFrs {
 
     @Column(name = "montant", columnDefinition = ("decimal(18,3)"), nullable = false)
     private BigDecimal montant;
+
+    @Column(name = "montant_en_devise_principal", columnDefinition = ("decimal(18,3)"), nullable = false)
+    private BigDecimal montantEnDevise;
+
+    @Column(name = "Taux_devise", columnDefinition = ("decimal(18,3)"), nullable = false)
+    private BigDecimal tauxDevise;
+
+    @Column(name = "Montant_Avance", columnDefinition = ("decimal(18,3) default 0"), nullable = false)
+    private BigDecimal montantAvance;
 
     @JoinColumn(name = "code_cost_centre", referencedColumnName = "code", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -139,6 +152,14 @@ public class ReglementFactureFrs {
     @Size(max = 200)
     @Column(name = "num_piece", length = 200, columnDefinition = "nvarchar(20)")
     private String numPiece;
+
+    @JoinColumn(name = "code_facture", referencedColumnName = "code", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private FactureFournisseur factureFournisseur;
+
+    @Column(name = "code_facture", updatable = false, insertable = false)
+    private Integer codeFactureFournisseur;
 
     public ReglementFactureFrs() {
     }
@@ -231,11 +252,11 @@ public class ReglementFactureFrs {
         this.codeEtatApprouver = codeEtatApprouver;
     }
 
-    public Integer getCodeUserApprouver() {
+    public Long getCodeUserApprouver() {
         return codeUserApprouver;
     }
 
-    public void setCodeUserApprouver(Integer codeUserApprouver) {
+    public void setCodeUserApprouver(Long codeUserApprouver) {
         this.codeUserApprouver = codeUserApprouver;
     }
 
@@ -335,6 +356,52 @@ public class ReglementFactureFrs {
         this.codeCaisse = codeCaisse;
     }
 
-    
-    
+    public FactureFournisseur getFactureFournisseur() {
+        return factureFournisseur;
+    }
+
+    public void setFactureFournisseur(FactureFournisseur factureFournisseur) {
+        this.factureFournisseur = factureFournisseur;
+    }
+
+    public Integer getCodeFactureFournisseur() {
+        return codeFactureFournisseur;
+    }
+
+    public void setCodeFactureFournisseur(Integer codeFactureFournisseur) {
+        this.codeFactureFournisseur = codeFactureFournisseur;
+    }
+
+    public BigDecimal getMontantEnDevise() {
+        return montantEnDevise;
+    }
+
+    public void setMontantEnDevise(BigDecimal montantEnDevise) {
+        this.montantEnDevise = montantEnDevise;
+    }
+
+    public BigDecimal getTauxDevise() {
+        return tauxDevise;
+    }
+
+    public void setTauxDevise(BigDecimal tauxDevise) {
+        this.tauxDevise = tauxDevise;
+    }
+
+    public String getTypeOP() {
+        return typeOP;
+    }
+
+    public void setTypeOP(String typeOP) {
+        this.typeOP = typeOP;
+    }
+
+    public BigDecimal getMontantAvance() {
+        return montantAvance;
+    }
+
+    public void setMontantAvance(BigDecimal montantAvance) {
+        this.montantAvance = montantAvance;
+    }
+
 }

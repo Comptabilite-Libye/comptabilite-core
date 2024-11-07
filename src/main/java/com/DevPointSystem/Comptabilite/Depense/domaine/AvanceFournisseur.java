@@ -4,6 +4,7 @@
  */
 package com.DevPointSystem.Comptabilite.Depense.domaine;
 
+import com.DevPointSystem.Comptabilite.Parametrage.domaine.Banque;
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.Caisse;
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.CostProfitCentre;
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.Devise;
@@ -40,98 +41,118 @@ import org.hibernate.envers.Audited;
  * @author Administrator
  */
 @Entity
-@Table(name = "facture_fournisseur", schema = "depense")
+@Table(name = "avance_fournisseur", schema = "depense")
 @Audited
-@AuditTable("facture_fournisseur_AUD")
-public class FactureFournisseur {
+@AuditTable("avance_fournisseur_AUD")
+public class AvanceFournisseur {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "code")
+    @Column(name = "Code")
     private Integer code;
 
     @Size(max = 200)
     @NotNull
-    @Column(name = "code_saisie", length = 200)
+    @Column(name = "Code_saisie", length = 200)
     private String codeSaisie;
 
-    @JoinColumn(name = "code_fournisseur", referencedColumnName = "Code", nullable = false)
+    @JoinColumn(name = "Code_fournisseur", referencedColumnName = "Code", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JsonBackReference
     private Fournisseur fournisseur;
 
-    @Column(name = "code_fournisseur", updatable = false, insertable = false)
+    @Column(name = "Code_fournisseur", updatable = false, insertable = false)
     private Integer codeFournisseur;
 
-   
-    @Column(name = "user_Create", nullable = false, length = 255, columnDefinition = "nvarchar(200)")
+    @Column(name = "User_Create", nullable = false, length = 255, columnDefinition = "nvarchar(200)")
     private String userCreate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "date_Create", nullable = false)
+    @Column(name = "Date_Create", nullable = false,columnDefinition = "datetime default (getdate())")
     private Date dateCreate;
 
     @Size(max = 200)
-    @Column(name = "observation", length = 200, nullable = false, columnDefinition = "nvarchar(max)")
+    @Column(name = "Observation", length = 200, nullable = false, columnDefinition = "nvarchar(max)")
     private String observation;
 
-    @JoinColumn(name = "code_devise", referencedColumnName = "Code", nullable = false)
+    @JoinColumn(name = "Code_devise", referencedColumnName = "Code", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JsonBackReference
     private Devise devise;
 
-    @Column(name = "code_devise", updatable = false, insertable = false)
+    @Column(name = "Code_devise", updatable = false, insertable = false)
     private Integer codeDevise;
 
-    @JoinColumn(name = "etat_approuver", referencedColumnName = "code", nullable = false)
+    @JoinColumn(name = "Etat_approuver", referencedColumnName = "code", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JsonBackReference
     private EtatApprouver etatApprouver;
 
-    @Column(name = "etat_approuver", updatable = false, insertable = false)
+    @Column(name = "Etat_approuver", updatable = false, insertable = false)
     private Integer codeEtatApprouver;
 
-    @Column(name = "code_user_approuver", columnDefinition = "Nvarchar(200) default ''")
+    @Column(name = "Code_user_approuver", columnDefinition = "Nvarchar(200) default ''")
     private Long codeUserApprouver;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "date_approuve", columnDefinition = "datetime ")
+    @Column(name = "Date_approuve", columnDefinition = "datetime ")
     private Date dateApprouve;
+ 
 
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "date_facture_fournisseur", nullable = false, columnDefinition = ("date"))
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate dateFactureFournisseur;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "factureFournisseur")
-    private Collection<DetailsFactureFournisseur> detailsFactureFournisseurs;
-
-    @Column(name = "montant_facture_fournisseur", columnDefinition = ("decimal(18,3)"), nullable = false)
-    private BigDecimal montantFactureFrounisseur;
-
-    @Column(name = "montant", columnDefinition = ("decimal(18,3)"), nullable = false)
+    @Column(name = "Montant", columnDefinition = ("decimal(18,3)"), nullable = false)
     private BigDecimal montant;
+ 
 
-    @Column(name = "numero_facture_forunisseur", columnDefinition = ("nvarchar(max)"), nullable = false, unique = true)
-    private String numFactureFournisseur;
-
-    @Column(name = "paid", columnDefinition = ("bit default 0"), nullable = false)
+    @Column(name = "Montant_En_Devise_Principal", columnDefinition = ("decimal(18,3)"), nullable = false)
+    private BigDecimal montantEnDevise;
+ 
+    @Column(name = "Paid", columnDefinition = ("bit default 0"), nullable = false)
     private Boolean paid;
 
-    @JoinColumn(name = "code_cost_centre", referencedColumnName = "code", nullable = false)
+    @JoinColumn(name = "Code_cost_centre", referencedColumnName = "code", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JsonBackReference
     private CostProfitCentre costProfitCentre;
 
-    @Column(name = "code_cost_centre", updatable = false, insertable = false)
+    @Column(name = "Code_cost_centre", updatable = false, insertable = false)
     private Integer codeCostProfitCentre;
-    
-    
-      @Column(name = "ordre_paiement", columnDefinition = ("bit default 0"), nullable = false)
-    private Boolean hasOrdrePaiement;
 
-    public FactureFournisseur() {
+    @Column(name = "Apurer", columnDefinition = ("bit default 0"), nullable = false)
+    private Boolean apurer;
+    
+    
+    @JoinColumn(name = "Code_mode_reglement", referencedColumnName = "code", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private ModeReglement modeReglement;
+
+    @Column(name = "Code_mode_reglement", updatable = false, insertable = false)
+    private Integer codeModeReglement;
+
+    @JoinColumn(name = "Code_banque", referencedColumnName = "code", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private Banque banque;
+
+    @Column(name = "Code_banque", updatable = false, insertable = false)
+    private Integer codeBanque;
+
+    @JoinColumn(name = "Code_caisse", referencedColumnName = "code", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private Caisse caisse;
+
+    @Column(name = "Code_caisse", updatable = false, insertable = false)
+    private Integer codeCaisse;
+
+    @Size(max = 200)
+    @Column(name = "Num_piece", length = 200, columnDefinition = "nvarchar(20)")
+    private String numPiece;
+    
+    @Column(name = "Taux_devise", columnDefinition = ("decimal(18,3)"), nullable = false)
+    private BigDecimal tauxDevise;
+
+    public AvanceFournisseur() {
     }
 
     public Integer getCode() {
@@ -230,36 +251,12 @@ public class FactureFournisseur {
         this.codeUserApprouver = codeUserApprouver;
     }
 
-    public LocalDate getDateFactureFournisseur() {
-        return dateFactureFournisseur;
+    public Date getDateApprouve() {
+        return dateApprouve;
     }
 
-    public void setDateFactureFournisseur(LocalDate dateFactureFournisseur) {
-        this.dateFactureFournisseur = dateFactureFournisseur;
-    }
-
-    public Collection<DetailsFactureFournisseur> getDetailsFactureFournisseurs() {
-        return detailsFactureFournisseurs;
-    }
-
-    public void setDetailsFactureFournisseurs(Collection<DetailsFactureFournisseur> detailsFactureFournisseurs) {
-        this.detailsFactureFournisseurs = detailsFactureFournisseurs;
-    }
-
-    public BigDecimal getMontantFactureFrounisseur() {
-        return montantFactureFrounisseur;
-    }
-
-    public void setMontantFactureFrounisseur(BigDecimal montantFactureFrounisseur) {
-        this.montantFactureFrounisseur = montantFactureFrounisseur;
-    }
-
-    public String getNumFactureFournisseur() {
-        return numFactureFournisseur;
-    }
-
-    public void setNumFactureFournisseur(String numFactureFournisseur) {
-        this.numFactureFournisseur = numFactureFournisseur;
+    public void setDateApprouve(Date dateApprouve) {
+        this.dateApprouve = dateApprouve;
     }
 
     public BigDecimal getMontant() {
@@ -268,14 +265,6 @@ public class FactureFournisseur {
 
     public void setMontant(BigDecimal montant) {
         this.montant = montant;
-    }
-
-    public Date getDateApprouve() {
-        return dateApprouve;
-    }
-
-    public void setDateApprouve(Date dateApprouve) {
-        this.dateApprouve = dateApprouve;
     }
 
     public Boolean getPaid() {
@@ -302,17 +291,88 @@ public class FactureFournisseur {
         this.codeCostProfitCentre = codeCostProfitCentre;
     }
 
-   
- 
-     public Boolean getHasOrdrePaiement() {
-        return hasOrdrePaiement;
+    public Boolean getApurer() {
+        return apurer;
     }
 
-    public void setHasOrdrePaiement(Boolean hasOrdrePaiement) {
-        this.hasOrdrePaiement = hasOrdrePaiement;
+    public void setApurer(Boolean apurer) {
+        this.apurer = apurer;
     }
+
+    public ModeReglement getModeReglement() {
+        return modeReglement;
+    }
+
+    public void setModeReglement(ModeReglement modeReglement) {
+        this.modeReglement = modeReglement;
+    }
+
+    public Integer getCodeModeReglement() {
+        return codeModeReglement;
+    }
+
+    public void setCodeModeReglement(Integer codeModeReglement) {
+        this.codeModeReglement = codeModeReglement;
+    }
+
+    public Banque getBanque() {
+        return banque;
+    }
+
+    public void setBanque(Banque banque) {
+        this.banque = banque;
+    }
+
+    public Integer getCodeBanque() {
+        return codeBanque;
+    }
+
+    public void setCodeBanque(Integer codeBanque) {
+        this.codeBanque = codeBanque;
+    }
+
+    public Caisse getCaisse() {
+        return caisse;
+    }
+
+    public void setCaisse(Caisse caisse) {
+        this.caisse = caisse;
+    }
+
+    public Integer getCodeCaisse() {
+        return codeCaisse;
+    }
+
+    public void setCodeCaisse(Integer codeCaisse) {
+        this.codeCaisse = codeCaisse;
+    }
+
+    public String getNumPiece() {
+        return numPiece;
+    }
+
+    public void setNumPiece(String numPiece) {
+        this.numPiece = numPiece;
+    }
+
+    public BigDecimal getTauxDevise() {
+        return tauxDevise;
+    }
+
+    public void setTauxDevise(BigDecimal tauxDevise) {
+        this.tauxDevise = tauxDevise;
+    }
+
+    public BigDecimal getMontantEnDevise() {
+        return montantEnDevise;
+    }
+
+    public void setMontantEnDevise(BigDecimal montantEnDevise) {
+        this.montantEnDevise = montantEnDevise;
+    }
+    
+    
+    
     
 
 }
-
-   

@@ -4,45 +4,19 @@
  */
 package com.DevPointSystem.Comptabilite.Depense.web;
 
-import com.DevPointSystem.Comptabilite.Authentification.dto.AccessUserDTO;
 import com.DevPointSystem.Comptabilite.Authentification.service.AccessUserService;
-import com.DevPointSystem.Comptabilite.Depense.domaine.FactureFournisseur;
 import com.DevPointSystem.Comptabilite.Depense.domaine.ReglementFactureFrs;
-import com.DevPointSystem.Comptabilite.Depense.dto.DetailsReglementFactureFrsDTO;
 import com.DevPointSystem.Comptabilite.Depense.dto.ReglementFactureFrsDTO;
-import com.DevPointSystem.Comptabilite.Depense.dto.ReglementFactureFrsDTO;
-import com.DevPointSystem.Comptabilite.Depense.service.FactureFournisseurService;
 import com.DevPointSystem.Comptabilite.Depense.service.ReglementFactureFournisseurService;
-import com.DevPointSystem.Comptabilite.Parametrage.dto.SocieteDTO;
-import com.DevPointSystem.Comptabilite.Parametrage.dto.paramDTO;
 import com.DevPointSystem.Comptabilite.Parametrage.service.ParamService;
 import com.DevPointSystem.Comptabilite.Parametrage.service.SocieteService;
-import com.google.common.base.Preconditions;
 import jakarta.validation.Valid;
-import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import net.sf.jasperreports.engine.JREmptyDataSource;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRPdfExporter;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
-import net.sf.jasperreports.export.SimpleExporterInput;
-import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
-import net.sf.jasperreports.export.SimplePdfReportConfiguration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -54,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import net.sf.jasperreports.engine.design.JasperDesign;
 
 /**
  *
@@ -77,8 +50,6 @@ public class ReglementFactureFournisseurRessource {
         this.accessUserService = accessUserService;
     }
 
-   
-
     @GetMapping("reglement_facture_fournisseur/{code}")
     public ResponseEntity<ReglementFactureFrsDTO> getReglementFactureFournisseurByCode(@PathVariable Integer code) {
         ReglementFactureFrsDTO dTO = reglementFactureFournisseurService.findOne(code);
@@ -95,15 +66,12 @@ public class ReglementFactureFournisseurRessource {
         Collection<ReglementFactureFrsDTO> dTOs = reglementFactureFournisseurService.findByCodeFournisseur(codeFournisseur);
         return ResponseEntity.ok().body(dTOs);
     }
-    
-        @GetMapping("reglement_facture_fournisseur/RegfactureBy")
-    public ResponseEntity<Collection<ReglementFactureFrsDTO>> getReglementFactureFournisseurByCodeFournisseurAndDevise(@RequestParam Integer codeFournisseur ,@RequestParam Integer codeDevise ) {
-        Collection<ReglementFactureFrsDTO> dTOs = reglementFactureFournisseurService.findByCodeFournisseurAndCodeDevise(codeFournisseur,codeDevise);
+
+    @GetMapping("reglement_facture_fournisseur/RegfactureBy")
+    public ResponseEntity<Collection<ReglementFactureFrsDTO>> getReglementFactureFournisseurByCodeFournisseurAndDevise(@RequestParam Integer codeFournisseur, @RequestParam Integer codeDevise) {
+        Collection<ReglementFactureFrsDTO> dTOs = reglementFactureFournisseurService.findByCodeFournisseurAndCodeDevise(codeFournisseur, codeDevise);
         return ResponseEntity.ok().body(dTOs);
     }
-    
-    
-    
 
     @GetMapping("reglement_facture_fournisseur/codeDevise")
     public ResponseEntity<Collection<ReglementFactureFrsDTO>> getReglementFactureFournisseurByCodeDevise(@RequestParam Collection<Integer> codeDevise) {
@@ -114,6 +82,13 @@ public class ReglementFactureFournisseurRessource {
     @GetMapping("reglement_facture_fournisseur/EtatApprouver/{codeEtatApprouver}")
     public ResponseEntity<List<ReglementFactureFrsDTO>> getReglementFactFrsByCodeEtatApprouve(@PathVariable Integer codeEtatApprouver) {
         List<ReglementFactureFrsDTO> dto = reglementFactureFournisseurService.findByEtatApprouver(codeEtatApprouver);
+        return ResponseEntity.ok().body(dto);
+
+    }
+
+    @GetMapping("reglement_facture_fournisseur/LazyEtatApprouver/{codeEtatApprouver}")
+    public ResponseEntity<List<ReglementFactureFrsDTO>> getReglementFactFrsByCodeEtatApprouveLazy(@PathVariable Integer codeEtatApprouver) {
+        List<ReglementFactureFrsDTO> dto = reglementFactureFournisseurService.findByEtatApprouverLazy(codeEtatApprouver);
         return ResponseEntity.ok().body(dto);
 
     }
@@ -207,5 +182,4 @@ public class ReglementFactureFournisseurRessource {
 //                .contentType(MediaType.APPLICATION_PDF)
 //                .body(res);
 //    }
-
 }

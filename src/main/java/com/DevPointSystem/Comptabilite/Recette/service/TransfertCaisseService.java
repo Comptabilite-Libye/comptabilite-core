@@ -169,9 +169,7 @@ public class TransfertCaisseService {
         Preconditions.checkArgument(inBase != null, "error.TransfertCaisseNotFound");
 
         MouvementCaisse mvtCaisse = new MouvementCaisse();
-        if (dto.getCodeEtatApprouver() == 2) {
-            System.out.println(" mvt caisse OK");
-//            mvtCaisse.setCode(dto.getCode());
+        if (dto.getCodeEtatApprouver() == 2) { 
             mvtCaisse.setCodeSaisie(inBase.getCodeSaisie());
             mvtCaisse.setDebit(inBase.getMontant());
             mvtCaisse.setMntDevise(inBase.getMontantEnDevise());

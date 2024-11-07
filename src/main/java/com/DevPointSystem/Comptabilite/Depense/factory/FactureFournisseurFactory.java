@@ -43,6 +43,8 @@ public class FactureFournisseurFactory {
             domaine.setMontant(dto.getMontant());
             domaine.setUserCreate(dto.getUserCreate());
 
+            domaine.setHasOrdrePaiement(dto.getHasOrdrePaiement());
+
             domaine.setDateFactureFournisseur(dto.getDateFactureFournisseur());
 
             domaine.setMontantFactureFrounisseur(dto.getMontantFactureFrounisseur());
@@ -74,10 +76,6 @@ public class FactureFournisseurFactory {
             if (domaine.getCodeEtatApprouver() != null) {
                 domaine.setEtatApprouver(EtatApprouverFactory.createEtatApprouverByCode(dto.getCodeEtatApprouver()));
             }
-            
-            
-            
-            
 
             if (dto.getDetailsFactureFournisseursDTOs() == null || dto.getDetailsFactureFournisseursDTOs().isEmpty()) {
                 throw new IllegalArgumentException("error.DetailsFactureRequired");
@@ -127,6 +125,8 @@ public class FactureFournisseurFactory {
             dto.setUserCreate(domaine.getUserCreate());
             dto.setMontant(domaine.getMontant());
             dto.setCodeUserApprouver(domaine.getCodeUserApprouver());
+            dto.setHasOrdrePaiement(domaine.getHasOrdrePaiement());
+
             dto.setPaid(domaine.getPaid());
             dto.setDateFactureFournisseur(domaine.getDateFactureFournisseur());
             dto.setNumFactureFournisseur(domaine.getNumFactureFournisseur());
@@ -165,6 +165,17 @@ public class FactureFournisseurFactory {
         }
     }
 
+    public static FactureFournisseurDTO factureFournisseurToFactureFournisseurDTOLazy(FactureFournisseur domaine) {
+
+        if (domaine != null) {
+            FactureFournisseurDTO dto = new FactureFournisseurDTO();
+            dto.setCode(domaine.getCode());
+            return dto;
+        } else {
+            return null;
+        }
+    }
+
     public static FactureFournisseurDTO factureFournisseurToFactureFournisseurDTO(FactureFournisseur domaine) {
 
         if (domaine != null) {
@@ -179,10 +190,13 @@ public class FactureFournisseurFactory {
             dto.setPaid(domaine.getPaid());
             dto.setDateFactureFournisseur(domaine.getDateFactureFournisseur());
             dto.setNumFactureFournisseur(domaine.getNumFactureFournisseur());
-            dto.setMontantFactureFrounisseur(domaine.getMontantFactureFrounisseur()); 
+            dto.setMontantFactureFrounisseur(domaine.getMontantFactureFrounisseur());
+
+            dto.setDesignationArDevise(domaine.getDevise().getDesignationAr());
+
             dto.setCostProfitCentreDTO(CostProfitCentreFactory.costProfitCentreToCostProfitCentreDTOLazy(domaine.getCostProfitCentre()));
             dto.setCodeCostProfitCentre(domaine.getCodeCostProfitCentre());
-          
+            dto.setHasOrdrePaiement(domaine.getHasOrdrePaiement());
             dto.setFournisseurDTO(FournisseurFactory.fournisseurToFournisseurDTO(domaine.getFournisseur()));
             dto.setCodeFournisseur(domaine.getCodeFournisseur());
 
@@ -221,6 +235,14 @@ public class FactureFournisseurFactory {
         return list;
     }
 
+    public static List<FactureFournisseurDTO> listFactureFournisseurToFactureFournisseurDTOsLazy(List<FactureFournisseur> factureFournisseurs) {
+        List<FactureFournisseurDTO> list = new ArrayList<>();
+        for (FactureFournisseur factureFournisseur : factureFournisseurs) {
+            list.add(factureFournisseurToFactureFournisseurDTOLazy(factureFournisseur));
+        }
+        return list;
+    }
+
     public static Collection<FactureFournisseurDTO> CollectionfactureFournisseursTofactureFournisseursDTOsCollection(Collection<FactureFournisseur> factureFournisseurs) {
         List<FactureFournisseurDTO> dtos = new ArrayList<>();
         factureFournisseurs.forEach(x -> {
@@ -236,6 +258,7 @@ public class FactureFournisseurFactory {
         if (domaine.getCodeEtatApprouver() != null) {
             domaine.setEtatApprouver(EtatApprouverFactory.createEtatApprouverByCode(dto.getCodeEtatApprouver()));
         }
+
         domaine.setCodeUserApprouver(dto.getCodeUserApprouver());
         domaine.setDateApprouve(new Date());
 
@@ -250,9 +273,34 @@ public class FactureFournisseurFactory {
         if (domaine.getCodeEtatApprouver() != null) {
             domaine.setEtatApprouver(EtatApprouverFactory.createEtatApprouverByCode(dto.getCodeEtatApprouver()));
         }
+
         domaine.setCodeUserApprouver(null);
         domaine.setDateApprouve(null);
 
+        return domaine;
+    }
+
+    public static FactureFournisseur CreatedOrdrePaiement(FactureFournisseur domaine, FactureFournisseurDTO dto) {
+        domaine.setCode(dto.getCode());
+        domaine.setHasOrdrePaiement(Boolean.TRUE);
+        return domaine;
+    }
+
+     public static FactureFournisseur PaieOrdrePaiement(FactureFournisseur domaine, FactureFournisseurDTO dto) {
+        domaine.setCode(dto.getCode());
+        domaine.setPaid(Boolean.TRUE);
+        return domaine;
+    }
+     
+    public static FactureFournisseur DeletedOrdrePaiement(FactureFournisseur domaine, FactureFournisseurDTO dto) {
+        domaine.setCode(dto.getCode());
+        domaine.setHasOrdrePaiement(Boolean.FALSE);
+        return domaine;
+    }
+    
+     public static FactureFournisseur DeletePaieOrdrePaiement(FactureFournisseur domaine, FactureFournisseurDTO dto) {
+        domaine.setCode(dto.getCode());
+        domaine.setPaid(Boolean.FALSE);
         return domaine;
     }
 }

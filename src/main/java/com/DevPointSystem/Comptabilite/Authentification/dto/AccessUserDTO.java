@@ -4,11 +4,7 @@
  */
 package com.DevPointSystem.Comptabilite.Authentification.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Lob;
 import java.util.Date;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  *
@@ -16,7 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
  */
 public class AccessUserDTO {
 
-    private Integer id;
+    private Long id;
 
     private String fullName;
 
@@ -37,11 +33,11 @@ public class AccessUserDTO {
     public AccessUserDTO() {
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

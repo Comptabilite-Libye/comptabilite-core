@@ -87,7 +87,15 @@ environnement : local
   
   
   
-  
+application:
+    cors:
+#        allowed-origins: "http://localhost:4900"
+        allowed-methods: "*"
+        allowed-headers: "*"
+        exposed-headers: "*"
+        allow-credentials: false
+        max-age: 3600
+        allowed-origins: "https://airbnbclone.codecake.fr"
   
   
 #  ////////////////// new 

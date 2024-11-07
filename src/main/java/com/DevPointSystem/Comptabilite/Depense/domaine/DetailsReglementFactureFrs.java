@@ -39,7 +39,7 @@ public class DetailsReglementFactureFrs {
     @EmbeddedId
     protected DetailsReglementFactureFrsPK detailsReglementFactureFrsPK;
 
-    @MapsId("codeRegelementFactureFournisseur")
+    @MapsId("codeReglementFactureFournisseur")
     @JoinColumn(name = "code_reglement_facture_fournisseur", referencedColumnName = "Code", nullable = false)
     @ManyToOne(optional = false)
     private ReglementFactureFrs reglementFactureFrs;

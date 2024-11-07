@@ -1,23 +1,51 @@
-## YAML Template.
- 
-#version: '3'
+### YAML Template.
+# 
+##version: '3'
+#
+#services:
+#  mysql-standalone:
+#    image: mysql:latest
+#    container_name: mysql-standalone
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=admin123
+#      - MYSQL_DATABASE=GComptabilite
+#      - MYSQL_USER=sa
+#      - MYSQL_PASSWORD=123
+#  springboot-docker-container:
+#    image: springboot-docker-container
+#    container_name: springboot-docker-container
+#    ports:
+#      - 9090:9090
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - mysql-standalone
+
+
 
 services:
-  mysql-standalone:
-    image: mysql:latest
-    container_name: mysql-standalone
+  sqlserver:  
+    image: mcr.microsoft.com/mssql/server:2019-latest   
+    container_name: sqlserver-comptabilite
     environment:
-      - MYSQL_ROOT_PASSWORD=admin123
-      - MYSQL_DATABASE=GComptabilite
-      - MYSQL_USER=sa
-      - MYSQL_PASSWORD=123
+      - ACCEPT_EULA=Y  
+      - SA_PASSWORD=123  
+      - MSSQL_COLLATION=French_CI_AS  
+#    ports:
+#      - "1433:1433"  
+
   springboot-docker-container:
     image: springboot-docker-container
     container_name: springboot-docker-container
     ports:
-      - 8080:8080
+      - "9090:9090" 
     build:
       context: ./
       dockerfile: Dockerfile
     depends_on:
-      - mysql-standalone
+      - sqlserver  
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlserver://localhost\sql2019;databaseName=GComptabilite;encrypt=false;trustServerCertificate=true  
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=123

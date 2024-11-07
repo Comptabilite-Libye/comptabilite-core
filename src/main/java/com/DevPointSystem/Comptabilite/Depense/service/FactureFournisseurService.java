@@ -18,7 +18,9 @@ import com.DevPointSystem.Comptabilite.Recette.repository.MouvementCaisseRepo;
 import com.DevPointSystem.Comptabilite.Recette.repository.SoldeCaisseRepo;
 import com.DevPointSystem.Comptabilite.web.Util.Helper;
 import com.google.common.base.Preconditions;
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,23 +39,21 @@ public class FactureFournisseurService {
 
     private final MouvementCaisseRepo mouvementCaisseRepo;
 
-    private final DetailsFactureFournisseurRepo detailsFactureFournisseurRepo; 
+    private final DetailsFactureFournisseurRepo detailsFactureFournisseurRepo;
 
-    private final SoldeCaisseRepo soldeCaisseRepo; 
-
-    public FactureFournisseurService(FactureFournisseurRepo factureFournisseurRepo, CompteurService compteurService, MouvementCaisseRepo mouvementCaisseRepo, DetailsFactureFournisseurRepo detailsFactureFournisseurRepo, SoldeCaisseRepo soldeCaisseRepo) {
+    public FactureFournisseurService(FactureFournisseurRepo factureFournisseurRepo, CompteurService compteurService, MouvementCaisseRepo mouvementCaisseRepo, DetailsFactureFournisseurRepo detailsFactureFournisseurRepo) {
         this.factureFournisseurRepo = factureFournisseurRepo;
         this.compteurService = compteurService;
         this.mouvementCaisseRepo = mouvementCaisseRepo;
         this.detailsFactureFournisseurRepo = detailsFactureFournisseurRepo;
-        this.soldeCaisseRepo = soldeCaisseRepo;
     }
 
-     
+ 
+ 
 
     @Transactional(readOnly = true)
     public List<FactureFournisseurDTO> findAllFactureFournisseur() {
-     
+
         return FactureFournisseurFactory.listFactureFournisseurToFactureFournisseurDTOs(factureFournisseurRepo.findAllByOrderByCodeSaisieDesc());
 
     }
@@ -66,21 +66,30 @@ public class FactureFournisseurService {
     }
 
     @Transactional(readOnly = true)
+    public Collection<FactureFournisseurDTO> findOneCollection(Boolean Paid, Date dateDebut, Date dateFin) { 
+        Collection<FactureFournisseur> domaine = factureFournisseurRepo.findByPaidAndDateCreateBetween(Paid, dateDebut, dateFin);
+        
+          Preconditions.checkArgument(!domaine.isEmpty(), "error.NoData");
+        return FactureFournisseurFactory.CollectionfactureFournisseursTofactureFournisseursDTOsCollection(domaine);
+    }
+
+    @Transactional(readOnly = true)
     public Collection<FactureFournisseurDTO> findByCodeFournisseur(Collection<Integer> codeFournisseur) {
         Collection<FactureFournisseur> result = factureFournisseurRepo.findByCodeFournisseurIn(Helper.removeNullValueFromCollection(codeFournisseur));
         return FactureFournisseurFactory.CollectionfactureFournisseursTofactureFournisseursDTOsCollection(result);
     }
-    
-    
-    
+
     @Transactional(readOnly = true)
-    public List<FactureFournisseurDTO> findByCodeFournisseurAndCodeDeviseAndNotPaid(Integer codeFournisseur,Integer codeDevise, Boolean Paid) {
-        List<FactureFournisseur> result = factureFournisseurRepo.findByCodeFournisseurAndCodeDeviseAndPaid(codeFournisseur, codeDevise,Paid);
+    public List<FactureFournisseurDTO> findByCodeFournisseurAndCodeDeviseAndNotPaid(Integer codeFournisseur, Integer codeDevise, Boolean hasOrdrePaiement) {
+        List<FactureFournisseur> result = factureFournisseurRepo.findByCodeFournisseurAndCodeDeviseAndHasOrdrePaiement(codeFournisseur, codeDevise, hasOrdrePaiement);
         return FactureFournisseurFactory.listFactureFournisseurToFactureFournisseurDTOs(result);
     }
-    
-    
-    
+
+    @Transactional(readOnly = true)
+    public List<FactureFournisseurDTO> findByCodeFournisseurAndCodeDeviseAndNotPaidAndApprouved(Integer codeFournisseur, Integer codeDevise, Boolean hasOrdrePaiement, Integer EtatApprouve) {
+        List<FactureFournisseur> result = factureFournisseurRepo.findByCodeFournisseurAndCodeDeviseAndHasOrdrePaiementAndCodeEtatApprouver(codeFournisseur, codeDevise, hasOrdrePaiement, EtatApprouve);
+        return FactureFournisseurFactory.listFactureFournisseurToFactureFournisseurDTOs(result);
+    }
 
     @Transactional(readOnly = true)
     public Collection<FactureFournisseurDTO> findByCodeDevise(Collection<Integer> codeDevise) {
@@ -93,9 +102,14 @@ public class FactureFournisseurService {
         return FactureFournisseurFactory.listFactureFournisseurToFactureFournisseurDTOs(factureFournisseurRepo.findFactureFournisseurByCodeEtatApprouver(CodeEtatApprouver));
     }
 
+    @Transactional(readOnly = true)
+    public List<FactureFournisseurDTO> findByEtatApprouverLazy(Integer CodeEtatApprouver) {
+        return FactureFournisseurFactory.listFactureFournisseurToFactureFournisseurDTOsLazy(factureFournisseurRepo.findFactureFournisseurByCodeEtatApprouver(CodeEtatApprouver));
+    }
+
     public FactureFournisseurDTO save(FactureFournisseurDTO dto) {
 
-        FactureFournisseur domaine = FactureFournisseurFactory.factureFournisseurDTOToFactureFournisseur(new FactureFournisseur(), dto); 
+        FactureFournisseur domaine = FactureFournisseurFactory.factureFournisseurDTOToFactureFournisseur(new FactureFournisseur(), dto);
         Compteur CompteurCodeSaisie = compteurService.findOne("CodeSaisieFF");
         String codeSaisieAC = CompteurCodeSaisie.getPrefixe() + CompteurCodeSaisie.getSuffixe();
         domaine.setCodeSaisie(codeSaisieAC);
@@ -103,35 +117,15 @@ public class FactureFournisseurService {
         domaine = factureFournisseurRepo.save(domaine);
         return FactureFournisseurFactory.factureFournisseurToFactureFournisseurDTO(domaine);
     }
-//
-//    public FactureFournisseur update(FactureFournisseurDTO dTO) { 
-//        FactureFournisseur domaine = factureFournisseurRepo.getReferenceById(dTO.getCode());
-//        Preconditions.checkArgument(true, "error.FactureFournisseurNotFound");
-//    
-//        domaine.getDetailsFactureFournisseurs().clear();
-//        factureFournisseurRepo.flush();
-//        FactureFournisseurFactory.factureFournisseurDTOToFactureFournisseur(dTO, domaine);
-//        return factureFournisseurRepo.save(domaine);
-//    }
-//    
 
-//    public FactureFournisseurDTO update(FactureFournisseurDTO dto) {
-//
-//        FactureFournisseur inBase = factureFournisseurRepo.getReferenceById(dto.getCode());
-//        Preconditions.checkArgument(inBase != null, "error.FactureFournisseurNotFound");
-////        inBase.getDetailsFactureFournisseurs().clear();
-//
-//        detailsFactureFournisseurRepo.deleteByCodeFactureFournisseur(inBase.getCode());
-//        factureFournisseurRepo.deleteById(inBase.getCode());
-//        inBase = FactureFournisseurFactory.factureFournisseurDTOToFactureFournisseur(inBase, dto);
-//        inBase = factureFournisseurRepo.save(inBase);
-//        FactureFournisseurDTO resultDTO = FactureFournisseurFactory.factureFournisseurToFactureFournisseurDTO(inBase);
-//        return resultDTO;
-//    }
     public FactureFournisseurDTO updateNewWithFlush(FactureFournisseurDTO dto) {
         FactureFournisseur inBase = factureFournisseurRepo.getReferenceById(dto.getCode());
         Preconditions.checkArgument(inBase != null, "error.FactureFournisseurNotFound");
-        detailsFactureFournisseurRepo.deleteByCodeFactureFournisseur(dto.getCode()); 
+
+        Preconditions.checkArgument(!inBase.getHasOrdrePaiement().equals(Boolean.TRUE), "error.FactureFournisseurHasOrdrePaiement");
+        System.out.println("  getHasOrdrePaiement OK Code " + inBase.getHasOrdrePaiement());
+
+        detailsFactureFournisseurRepo.deleteByCodeFactureFournisseur(dto.getCode());
         System.out.println("flush deleted OK Code " + dto.getCode());
 
         inBase = FactureFournisseurFactory.factureFournisseurDTOToFactureFournisseur(inBase, dto);
@@ -142,17 +136,18 @@ public class FactureFournisseurService {
 
     public void deleteFactureFournisseur(Integer code) {
         Preconditions.checkArgument(factureFournisseurRepo.existsById(code), "error.FactureFournisseurNotFound");
+        FactureFournisseur inBase = factureFournisseurRepo.getReferenceById(code);
+        Preconditions.checkArgument(inBase.getHasOrdrePaiement().equals(Boolean.TRUE), "error.FactureFournisseurHasOrdrePaiement");
+
         factureFournisseurRepo.deleteById(code);
     }
 
     public FactureFournisseurDTO approuveAC(FactureFournisseurDTO dto) {
         FactureFournisseur inBase = factureFournisseurRepo.getReferenceById(dto.getCode());
         Preconditions.checkArgument(inBase != null, "error.FactureFournisseurNotFound");
+        Preconditions.checkArgument(inBase.getHasOrdrePaiement() != true, "error.FactureFournisseurApprouved");
         inBase = FactureFournisseurFactory.ApprouveFactureFournisseurDTOToFactureFournisseur(inBase, dto);
-
-         
         inBase = factureFournisseurRepo.save(inBase);
- 
         FactureFournisseurDTO resultDTO = FactureFournisseurFactory.factureFournisseurToFactureFournisseurDTO(inBase);
         return resultDTO;
     }
@@ -160,11 +155,11 @@ public class FactureFournisseurService {
     public FactureFournisseurDTO CancelapprouveAC(FactureFournisseurDTO dto) {
         FactureFournisseur inBase = factureFournisseurRepo.getReferenceById(dto.getCode());
         Preconditions.checkArgument(inBase != null, "error.FactureFournisseurNotFound");
+
+        Preconditions.checkArgument(inBase.getHasOrdrePaiement() != true, "error.FactureFournisseurApprouved");
+
         inBase = FactureFournisseurFactory.CancelFactureFournisseurDTOToFactureFournisseur(inBase, dto);
-
-      
         mouvementCaisseRepo.deleteByCodeSaisie(dto.getCodeSaisie());
-
         inBase = factureFournisseurRepo.save(inBase);
         FactureFournisseurDTO resultDTO = FactureFournisseurFactory.factureFournisseurToFactureFournisseurDTO(inBase);
         return resultDTO;
@@ -174,6 +169,54 @@ public class FactureFournisseurService {
     public Collection<DetailsFactureFournisseurDTO> findOneWithDetails(Integer code) {
         Collection<DetailsFactureFournisseur> domaine = detailsFactureFournisseurRepo.findByDetailsFactureFournisseurPK_codeFactureFournisseur(code);
         return DetailsFactureFournisseurFactory.detailsFactureFournisseurTodetailsFactureFournisseurDTOCollections(domaine);
+    }
+
+//    @Transactional(readOnly = true)
+//    public Collection<FactureFournisseurDTO> findOneWithDetailsForDateAndPaied(Boolean HasOrdrePaiement, Long dateDebut, Long dateFin, Integer code) {
+//
+//        List<FactureFournisseur> x = new ArrayList<>();
+//        QFactureFournisseur qFactureAdmission = QFactureFournisseur.factureFournisseur;
+//        WhereClauseBuilder builder = new WhereClauseBuilder().optionalAnd(dateDebut, () -> qFactureAdmission.dateFacture.goe(Helper.resetTime(new Date(dateDebut))))
+//                .optionalAnd(dateFin, () -> qFactureAdmission.dateFacture.loe(Helper.getLastHourInDate(new Date(dateFin))))
+//                .and(qFactureAdmission.admissionFacturation().admission().numSoc.isNotNull())
+//                .and(qFactureAdmission.bordereauSociete().code.isNull());
+//
+//        return FactureFournisseurFactory.CollectionfactureFournisseursTofactureFournisseursDTOsCollection(x);
+//    }
+    public FactureFournisseurDTO CreatedOrdrePaiement(FactureFournisseurDTO dto) {
+        FactureFournisseur inBase = factureFournisseurRepo.getReferenceById(dto.getCode());
+        Preconditions.checkArgument(inBase != null, "error.FactureFournisseurNotFound");
+        inBase = FactureFournisseurFactory.CreatedOrdrePaiement(inBase, dto);
+        inBase = factureFournisseurRepo.save(inBase);
+        FactureFournisseurDTO resultDTO = FactureFournisseurFactory.factureFournisseurToFactureFournisseurDTO(inBase);
+        return resultDTO;
+    }
+    
+        public FactureFournisseurDTO CreatedPaieOrdrePaiement(FactureFournisseurDTO dto) {
+        FactureFournisseur inBase = factureFournisseurRepo.getReferenceById(dto.getCode());
+        Preconditions.checkArgument(inBase != null, "error.FactureFournisseurNotFound");
+        inBase = FactureFournisseurFactory.PaieOrdrePaiement(inBase, dto);
+        inBase = factureFournisseurRepo.save(inBase);
+        FactureFournisseurDTO resultDTO = FactureFournisseurFactory.factureFournisseurToFactureFournisseurDTO(inBase);
+        return resultDTO;
+    }
+
+    public FactureFournisseurDTO DeleteOrdrePaiement(FactureFournisseurDTO dto) {
+        FactureFournisseur inBase = factureFournisseurRepo.getReferenceById(dto.getCode());
+        Preconditions.checkArgument(inBase != null, "error.FactureFournisseurNotFound");
+        inBase = FactureFournisseurFactory.DeletedOrdrePaiement(inBase, dto);
+        inBase = factureFournisseurRepo.save(inBase);
+        FactureFournisseurDTO resultDTO = FactureFournisseurFactory.factureFournisseurToFactureFournisseurDTO(inBase);
+        return resultDTO;
+    }
+    
+       public FactureFournisseurDTO DeletePaieOrdrePaiement(FactureFournisseurDTO dto) {
+        FactureFournisseur inBase = factureFournisseurRepo.getReferenceById(dto.getCode());
+        Preconditions.checkArgument(inBase != null, "error.FactureFournisseurNotFound");
+        inBase = FactureFournisseurFactory.DeletePaieOrdrePaiement(inBase, dto);
+        inBase = factureFournisseurRepo.save(inBase);
+        FactureFournisseurDTO resultDTO = FactureFournisseurFactory.factureFournisseurToFactureFournisseurDTO(inBase);
+        return resultDTO;
     }
 
 }

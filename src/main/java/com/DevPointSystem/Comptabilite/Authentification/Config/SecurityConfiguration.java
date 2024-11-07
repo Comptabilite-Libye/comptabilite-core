@@ -38,30 +38,18 @@ import com.DevPointSystem.Comptabilite.Authentification.Config.jwt.JwtRequestFil
 //import org.springframework.web.context.request.RequestContextHolder;
 //import org.springframework.web.filter.CorsFilter;
 
-import java.io.IOException;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.savedrequest.NullRequestCache;
-import org.springframework.web.context.request.RequestContextHolder;
 
 /**
  *
@@ -90,28 +78,26 @@ public class SecurityConfiguration {
  
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf()
-                .disable()
-                .authorizeHttpRequests()
-//                .requestMatchers("/**")
-//                .permitAll()
-                 .requestMatchers("/api/auth/login")
-                .permitAll()
-                .requestMatchers("/api/**")
-                .authenticated()
-               
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http
+            // CSRF Protection (Consider if you REALLY need to disable it)
+            .csrf(csrf -> csrf.disable()) 
+
+            // Authorization Configuration
+            .authorizeHttpRequests(requests -> requests
+                    .requestMatchers("/api/auth/login").permitAll()
+//                    .requestMatchers("/api/**").permitAll()    
+                    .requestMatchers("/api/**").authenticated() 
+
+            )
+
+            .sessionManagement(session -> session
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-//    @Bean
-//    HttpSessionStrategy sessionStrategy() {
-//        return new CustomHeaderHttpSessionStrategy();
-//    }
+ 
 }
