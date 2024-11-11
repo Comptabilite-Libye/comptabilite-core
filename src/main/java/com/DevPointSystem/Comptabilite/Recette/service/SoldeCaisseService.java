@@ -39,7 +39,7 @@ public class SoldeCaisseService {
 
     @Transactional(readOnly = true)
     public SoldeCaisseDTO findOne(Integer code) {
-        SoldeCaisse domaine = soldeCaisseRepo.getReferenceById(code);
+        SoldeCaisse domaine = soldeCaisseRepo.findByCode(code);
         Preconditions.checkArgument(domaine.getCode() != null, "error.SoldeCaisseNotFound");
         return SoldeCaisseFactory.soldeCaisseToSoldeCaisseDTO(domaine);
     }

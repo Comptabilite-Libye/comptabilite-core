@@ -17,6 +17,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReglementFactureFrsRepo extends JpaRepository<ReglementFactureFrs, Integer> {
 
+    ReglementFactureFrs findByCode(Integer code);
+
     List<ReglementFactureFrs> findByCodeFournisseurIn(Collection<Integer> codeFournisseur);
 
     List<ReglementFactureFrs> findByCodeDeviseIn(Collection<Integer> codeDevise);

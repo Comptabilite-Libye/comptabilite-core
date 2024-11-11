@@ -21,6 +21,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FactureFournisseurRepo extends JpaRepository<FactureFournisseur, Integer> {
 
+    FactureFournisseur findByCode(Integer code);
+
     List<FactureFournisseur> findByCodeFournisseurIn(Collection<Integer> codeFournisseur);
 
     List<FactureFournisseur> findByCodeDeviseIn(Collection<Integer> codeDevise);

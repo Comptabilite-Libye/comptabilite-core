@@ -128,7 +128,7 @@ public class AlimentationCaisseService {
 //        return resultDTO;
 //    }
     public AlimentationCaisseDTO updateNewWithFlush(AlimentationCaisseDTO dto) {
-        AlimentationCaisse inBase = alimentationCaisseRepo.getReferenceById(dto.getCode());
+        AlimentationCaisse inBase = alimentationCaisseRepo.findByCode(dto.getCode());
         Preconditions.checkArgument(inBase != null, "error.AlimentationCaisseNotFound");
         detailsAlimentationCaisseRepo.deleteByCodeAlimentationCaisse(dto.getCode());
         inBase = AlimentationCaisseFactory.alimentationCaisseDTOToAlimentationCaisse(inBase, dto);
@@ -143,7 +143,7 @@ public class AlimentationCaisseService {
     }
 
     public AlimentationCaisseDTO approuveAC(AlimentationCaisseDTO dto) {
-        AlimentationCaisse inBase = alimentationCaisseRepo.getReferenceById(dto.getCode());
+        AlimentationCaisse inBase = alimentationCaisseRepo.findByCode(dto.getCode());
         Preconditions.checkArgument(inBase != null, "error.AlimentationCaisseNotFound");
         inBase = AlimentationCaisseFactory.ApprouveAlimentationCaisseDTOToAlimentationCaisse(inBase, dto);
 
@@ -192,7 +192,7 @@ public class AlimentationCaisseService {
     }
 
     public AlimentationCaisseDTO CancelapprouveAC(AlimentationCaisseDTO dto) {
-        AlimentationCaisse inBase = alimentationCaisseRepo.getReferenceById(dto.getCode());
+        AlimentationCaisse inBase = alimentationCaisseRepo.findByCode(dto.getCode());
         Preconditions.checkArgument(inBase != null, "error.AlimentationCaisseNotFound");
         inBase = AlimentationCaisseFactory.CancelAlimentationCaisseDTOToAlimentationCaisse(inBase, dto);
 

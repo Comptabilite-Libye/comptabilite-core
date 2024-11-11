@@ -59,9 +59,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         final String requestUri = request.getServletPath();
 
         String username = null;
-        String jwtToken = null; 
-        
-     
+        String jwtToken = null;
 
         if (requestUri.equals("/api/auth/login")) {
             chain.doFilter(request, response);
@@ -101,10 +99,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                                 } else {
 //                                        System.out.println("V4");
                                     // Handle other exceptions (potentially server errors)
-                                    logger.error("Error processing request: " + e.getMessage());
-                                    sendErrorResponse(response, HttpStatus.CONFLICT, "CONFLICT Error");
+                                    logger.error("Error processing request: " + e.getMessage(), e); // Log the full exception
+                                    sendErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR, "Server error"); // 500 error for other issues
                                     return;
-                                } 
+                                }
                             }
 //                               System.out.println("V5");
                             // Only proceed with the request if the token is valid
@@ -116,7 +114,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                             sendErrorResponse(response, HttpStatus.FORBIDDEN, "Token is not valid");
                             return; // Stop processing the request
                         }
-                         
+
                     } else {
                         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                             if (jwtTokenUtil.validateToken(jwtToken)) {

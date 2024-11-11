@@ -114,7 +114,7 @@ public class ReglementFactureFrs {
     @Column(name = "Taux_devise", columnDefinition = ("decimal(18,3)"), nullable = false)
     private BigDecimal tauxDevise;
 
-    @Column(name = "Montant_Avance", columnDefinition = ("decimal(18,3) default 0"), nullable = false)
+    @Column(name = "Montant_Avance", columnDefinition = ("decimal(18,3)"), nullable = false)
     private BigDecimal montantAvance;
 
     @JoinColumn(name = "code_cost_centre", referencedColumnName = "code", nullable = false)

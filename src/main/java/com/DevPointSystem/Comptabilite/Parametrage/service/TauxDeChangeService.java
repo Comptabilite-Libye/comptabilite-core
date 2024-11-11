@@ -43,8 +43,8 @@ public class TauxDeChangeService {
         Preconditions.checkArgument(domaine.getCode() != null, "error.TauxDeChangeNotFound");
         return TauxDeChangeFactory.tauxDeChangeToTauxDeChangeDTO(domaine);
     }
-    
-        @Transactional(readOnly = true)
+
+    @Transactional(readOnly = true)
     public TauxDeChangeDTO findOneByCodeDevise(Integer codeDevise) {
         TauxDeChange domaine = tauxDeChangeRepo.findByCodeDevise(codeDevise);
         Preconditions.checkArgument(domaine.getCode() != null, "error.TauxDeChangeNotFound");
@@ -54,9 +54,10 @@ public class TauxDeChangeService {
 //
     public TauxDeChangeDTO save(TauxDeChangeDTO dto) {
         TauxDeChange domaine = TauxDeChangeFactory.tauxDeChangeDTOToTauxDeChange(dto, new TauxDeChange());
-        
+
         DeviseDTO deviseDTOs = deviseService.findOne(dto.getCodeDevise());
         deviseDTOs.setHasTaux(true);
+        deviseDTOs.setTauxChange(dto.getTauxChange());
         deviseService.updateHasTaux(deviseDTOs);
         domaine = tauxDeChangeRepo.save(domaine);
         return TauxDeChangeFactory.tauxDeChangeToTauxDeChangeDTO(domaine);
@@ -64,9 +65,16 @@ public class TauxDeChangeService {
 
     public TauxDeChange update(TauxDeChangeDTO dto) {
         Preconditions.checkArgument((dto.getCode() != null), "error.TauxDeChangeNotFound");
-        TauxDeChange domaine = tauxDeChangeRepo.getReferenceById(dto.getCode()); 
+        TauxDeChange domaine = tauxDeChangeRepo.getReferenceById(dto.getCode());
         Preconditions.checkArgument(true, "error.TauxDeChangeNotFound");
         dto.setCode(domaine.getCode());
+
+        DeviseDTO deviseDTOs = deviseService.findOne(dto.getCodeDevise());
+        deviseDTOs.setHasTaux(true);
+        deviseDTOs.setTauxChange(dto.getTauxChange());
+        deviseService.updateHasTaux(deviseDTOs);
+        domaine = tauxDeChangeRepo.save(domaine);
+
         TauxDeChangeFactory.tauxDeChangeDTOToTauxDeChange(dto, domaine);
         return tauxDeChangeRepo.save(domaine);
     }

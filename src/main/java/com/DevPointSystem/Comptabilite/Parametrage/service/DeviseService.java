@@ -10,8 +10,10 @@ import com.DevPointSystem.Comptabilite.Parametrage.factory.DeviseFactory;
 import com.DevPointSystem.Comptabilite.Parametrage.repository.DeviseRepo;
 import com.google.common.base.Preconditions;
 import java.util.List;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  *
@@ -35,10 +37,8 @@ public class DeviseService {
 
     @Transactional(readOnly = true)
     public DeviseDTO findOne(Integer code) {
-        Devise domaine = deviseRepo.getReferenceById(code);
-        System.out.println("domaine.getCode()" + domaine.getCode());
-        com.DevPointSystem.Comptabilite.web.Util.Preconditions.checkBusinessLogique(domaine.getCode() == null, "error.DeviseNotFound");
-
+        Devise domaine = deviseRepo.findByCode(code);
+        Preconditions.checkArgument(domaine != null, "error.DeviseNotFound");
         return DeviseFactory.deviseToDeviseDTO(domaine);
     }
 

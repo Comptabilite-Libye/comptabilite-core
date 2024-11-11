@@ -8,6 +8,7 @@ import com.DevPointSystem.Comptabilite.Depense.domaine.AvanceFournisseur;
 import com.DevPointSystem.Comptabilite.Depense.domaine.DetailsReglementFactureFrs;
 import com.DevPointSystem.Comptabilite.Depense.domaine.FactureFournisseur;
 import com.DevPointSystem.Comptabilite.Depense.domaine.ReglementFactureFrs;
+import com.DevPointSystem.Comptabilite.Depense.dto.AvanceFournisseurDTO;
 import com.DevPointSystem.Comptabilite.Depense.dto.DetailsReglementFactureFrsDTO;
 import com.DevPointSystem.Comptabilite.Depense.dto.FactureFournisseurDTO;
 import com.DevPointSystem.Comptabilite.Depense.dto.ReglementFactureFrsDTO;
@@ -70,8 +71,9 @@ public class ReglementFactureFournisseurService {
     private final FactureFournisseurService factureFournisseurService;
 
     private final AvanceFournisseurRepo avanceFournisseurRepo;
+    private final AvanceFournisseurService avanceFournisseurService;
 
-    public ReglementFactureFournisseurService(ReglementFactureFrsRepo reglementFactureFrsRepo, CompteurService compteurService, MouvementCaisseRepo mouvementCaisseRepo, DetailsReglementFactureFrsRepo detailsReglementFactureFrsRepo, SoldeCaisseRepo soldeCaisseRepo, SoldeCaisseService soldeCaisseService, FactureFournisseurService factureFournisseurService, AvanceFournisseurRepo avanceFournisseurRepo) {
+    public ReglementFactureFournisseurService(ReglementFactureFrsRepo reglementFactureFrsRepo, CompteurService compteurService, MouvementCaisseRepo mouvementCaisseRepo, DetailsReglementFactureFrsRepo detailsReglementFactureFrsRepo, SoldeCaisseRepo soldeCaisseRepo, SoldeCaisseService soldeCaisseService, FactureFournisseurService factureFournisseurService, AvanceFournisseurRepo avanceFournisseurRepo, AvanceFournisseurService avanceFournisseurService) {
         this.reglementFactureFrsRepo = reglementFactureFrsRepo;
         this.compteurService = compteurService;
         this.mouvementCaisseRepo = mouvementCaisseRepo;
@@ -80,6 +82,7 @@ public class ReglementFactureFournisseurService {
         this.soldeCaisseService = soldeCaisseService;
         this.factureFournisseurService = factureFournisseurService;
         this.avanceFournisseurRepo = avanceFournisseurRepo;
+        this.avanceFournisseurService = avanceFournisseurService;
     }
 
     @Transactional(readOnly = true)
@@ -91,7 +94,7 @@ public class ReglementFactureFournisseurService {
 
     @Transactional(readOnly = true)
     public ReglementFactureFrsDTO findOne(Integer code) {
-        ReglementFactureFrs domaine = reglementFactureFrsRepo.getReferenceById(code);
+        ReglementFactureFrs domaine = reglementFactureFrsRepo.findByCode(code);
         Preconditions.checkArgument(domaine.getCode() != null, "error.FactureFournisseurNotFound");
         return ReglementFactureFournisseurFactory.reglementfactureFournisseurToReglementFactureFournisseurDTOUpdate(domaine);
     }
@@ -141,13 +144,10 @@ public class ReglementFactureFournisseurService {
 
         } else {
             String codeSaisieAC = CompteurCodeSaisieAV.getPrefixe() + CompteurCodeSaisieAV.getSuffixe();
-
             compteurService.incrementeSuffixe(CompteurCodeSaisieAV);
             domaine.setCodeSaisie(codeSaisieAC);
-
             AvanceFournisseur avanceFournisseur = new AvanceFournisseur();
-//            avanceFournisseur.setCode(dto.getCode());
-            avanceFournisseur.setCodeSaisie(dto.getCodeSaisie());
+            avanceFournisseur.setCodeSaisie(codeSaisieAC);
             avanceFournisseur.setApurer(Boolean.FALSE);
             avanceFournisseur.setDateCreate(dto.getDateCreate());
             avanceFournisseur.setUserCreate(dto.getUserCreate());
@@ -199,7 +199,7 @@ public class ReglementFactureFournisseurService {
     }
 
     public ReglementFactureFrsDTO updateNewWithFlush(ReglementFactureFrsDTO dto) {
-        ReglementFactureFrs inBase = reglementFactureFrsRepo.getReferenceById(dto.getCode());
+        ReglementFactureFrs inBase = reglementFactureFrsRepo.findByCode(dto.getCode());
         Preconditions.checkArgument(inBase != null, "error.FactureFournisseurNotFound");
         detailsReglementFactureFrsRepo.deleteByCodeReglementFactureFournisseur(dto.getCode());
         System.out.println("flush deleted OK Code " + dto.getCode());
@@ -212,16 +212,25 @@ public class ReglementFactureFournisseurService {
 
     public void deleteReglementFactureFournisseur(Integer code) {
         Preconditions.checkArgument(reglementFactureFrsRepo.existsById(code), "error.FactureFournisseurNotFound");
-        ReglementFactureFrs inBase = reglementFactureFrsRepo.getReferenceById(code);
-        FactureFournisseurDTO factureFournisseur = factureFournisseurService.findOne(inBase.getCodeFactureFournisseur());
 
+        ReglementFactureFrs inBase = reglementFactureFrsRepo.findByCode(code);
         Preconditions.checkArgument(inBase.getCodeUserApprouver() == null, "error.ReglementFactureApprouved");
-        factureFournisseurService.DeleteOrdrePaiement(factureFournisseur);
+
+        if (inBase.getTypeOP().equals("OP")) {
+            FactureFournisseurDTO factureFournisseur = factureFournisseurService.findOne(inBase.getCodeFactureFournisseur());
+            factureFournisseurService.DeleteOrdrePaiement(factureFournisseur);
+
+        } else {
+            AvanceFournisseurDTO avanceFournisseurDTO = avanceFournisseurService.findOneByCodeSaisie(inBase.getCodeSaisie());
+            System.out.println("avanceFournisseurDTO  get code " + avanceFournisseurDTO.getCodeSaisie());
+            avanceFournisseurService.deleteAvanceFournisseur(avanceFournisseurDTO.getCode());
+
+        }
         reglementFactureFrsRepo.deleteById(code);
     }
 
     public ReglementFactureFrsDTO approuveRegFactFrs(ReglementFactureFrsDTO dto) {
-        ReglementFactureFrs inBase = reglementFactureFrsRepo.getReferenceById(dto.getCode());
+        ReglementFactureFrs inBase = reglementFactureFrsRepo.findByCode(dto.getCode());
         Preconditions.checkArgument(inBase != null, "error.FactureFournisseurNotFound");
 
         SoldeCaisse soldeCaisse = soldeCaisseRepo.findByCodeCaisse(dto.getCodeCaisse());
@@ -274,8 +283,18 @@ public class ReglementFactureFournisseurService {
             soldeCaisseService.updateMontant(soldeCaisseDTOs);
             inBase = reglementFactureFrsRepo.save(inBase);
 
-            FactureFournisseurDTO factureFournisseur = factureFournisseurService.findOne(inBase.getCodeFactureFournisseur());
-            factureFournisseurService.CreatedPaieOrdrePaiement(factureFournisseur);
+            if (inBase.getTypeOP().equals("OP")) {
+                FactureFournisseurDTO factureFournisseur = factureFournisseurService.findOne(inBase.getCodeFactureFournisseur());
+                factureFournisseurService.CreatedPaieOrdrePaiement(factureFournisseur);
+            } else {
+                AvanceFournisseurDTO avanceFournisseurDTO = avanceFournisseurService.findOneByCodeSaisie(inBase.getCodeSaisie());
+                avanceFournisseurDTO.setCodeUserApprouver(dto.getCodeUserApprouver());
+                avanceFournisseurDTO.setCodeEtatApprouver(dto.getCodeEtatApprouver());
+
+                avanceFournisseurService.approuveAvanceFournisseur(avanceFournisseurDTO);
+                System.out.println("changement  ");
+
+            }
 
         } else if (dto.getOldEtatApprouve() == 2 && dto.getCodeEtatApprouver() == 3) {
             SoldeCaisseDTO soldeCaisseDTOs = soldeCaisseService.findByCodeCaisse(inBase.getCodeCaisse());
@@ -287,18 +306,34 @@ public class ReglementFactureFournisseurService {
 
             mouvementCaisseRepo.deleteByCodeSaisie(dto.getCodeSaisie());
             inBase = reglementFactureFrsRepo.save(inBase);
-            FactureFournisseurDTO factureFournisseur = factureFournisseurService.findOne(inBase.getCodeFactureFournisseur());
-            factureFournisseurService.DeletePaieOrdrePaiement(factureFournisseur);
+
+            if (inBase.getTypeOP().equals("OP")) {
+                FactureFournisseurDTO factureFournisseur = factureFournisseurService.findOne(inBase.getCodeFactureFournisseur());
+                factureFournisseurService.DeletePaieOrdrePaiement(factureFournisseur);
+            } else {
+                AvanceFournisseurDTO avanceFournisseurDTO = avanceFournisseurService.findOneByCodeSaisie(inBase.getCodeSaisie());
+                avanceFournisseurDTO.setCodeUserApprouver(dto.getCodeUserApprouver());
+                avanceFournisseurDTO.setCodeEtatApprouver(dto.getCodeEtatApprouver());
+                avanceFournisseurService.CancelapprouveAvanceFournisseur(avanceFournisseurDTO);
+
+            }
+
         } else {
+            AvanceFournisseurDTO avanceFournisseurDTO = avanceFournisseurService.findOneByCodeSaisie(inBase.getCodeSaisie());
+            avanceFournisseurDTO.setCodeUserApprouver(dto.getCodeUserApprouver());
+            avanceFournisseurDTO.setCodeEtatApprouver(dto.getCodeEtatApprouver());
+            avanceFournisseurService.approuveAvanceFournisseur(avanceFournisseurDTO);
             inBase = reglementFactureFrsRepo.save(inBase);
         }
 
+//        AvanceFournisseurDTO avanceFournisseurDTO = avanceFournisseurService.findOneByCodeSaisie(inBase.getCodeSaisie());
+//        avanceFournisseurService.approuveAvanceFournisseur(avanceFournisseurDTO);
         ReglementFactureFrsDTO resultDTO = ReglementFactureFournisseurFactory.reglementfactureFournisseurToReglementFactureFournisseurDTO(inBase);
         return resultDTO;
     }
 
     public ReglementFactureFrsDTO CancelapprouveRegFactFrs(ReglementFactureFrsDTO dto) {
-        ReglementFactureFrs inBase = reglementFactureFrsRepo.getReferenceById(dto.getCode());
+        ReglementFactureFrs inBase = reglementFactureFrsRepo.findByCode(dto.getCode());
         Preconditions.checkArgument(inBase != null, "error.FactureFournisseurNotFound");
         inBase = ReglementFactureFournisseurFactory.CancelReglementFactureFournisseurDTOToReglementFactureFournisseur(inBase, dto);
 
@@ -314,8 +349,16 @@ public class ReglementFactureFournisseurService {
 
             mouvementCaisseRepo.deleteByCodeSaisie(dto.getCodeSaisie());
             inBase = reglementFactureFrsRepo.save(inBase);
-            FactureFournisseurDTO factureFournisseur = factureFournisseurService.findOne(inBase.getCodeFactureFournisseur());
-            factureFournisseurService.DeletePaieOrdrePaiement(factureFournisseur);
+            if (inBase.getTypeOP().equals("OP")) {
+                FactureFournisseurDTO factureFournisseur = factureFournisseurService.findOne(inBase.getCodeFactureFournisseur());
+                factureFournisseurService.DeletePaieOrdrePaiement(factureFournisseur);
+            } else {
+                AvanceFournisseurDTO avanceFournisseurDTO = avanceFournisseurService.findOneByCodeSaisie(inBase.getCodeSaisie());
+                avanceFournisseurDTO.setCodeUserApprouver(dto.getCodeUserApprouver());
+                avanceFournisseurDTO.setCodeEtatApprouver(dto.getCodeEtatApprouver());
+                avanceFournisseurService.CancelapprouveAvanceFournisseur(avanceFournisseurDTO);
+
+            }
         }
 
         ReglementFactureFrsDTO resultDTO = ReglementFactureFournisseurFactory.reglementfactureFournisseurToReglementFactureFournisseurDTO(inBase);

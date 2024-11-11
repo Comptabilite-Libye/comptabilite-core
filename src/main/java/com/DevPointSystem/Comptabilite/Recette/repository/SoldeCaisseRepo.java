@@ -18,6 +18,9 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface SoldeCaisseRepo extends JpaRepository<SoldeCaisse, Integer> {
+    
+    
+    SoldeCaisse findByCode(Integer code);
 
     List<SoldeCaisse> findByCodeDeviseIn(Collection<Integer> codeDevise);
 

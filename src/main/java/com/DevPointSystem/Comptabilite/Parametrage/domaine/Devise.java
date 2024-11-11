@@ -16,6 +16,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 
@@ -58,7 +59,10 @@ public class Devise implements Serializable {
     private Date dateCreate;
 
     @Column(name = "has_taux", nullable = false, columnDefinition = "bit default 0")
-    private boolean hasTaux ;
+    private boolean hasTaux;
+
+    @Column(name = "Taux", columnDefinition = ("decimal(18,3)"))
+    private BigDecimal tauxChange;
 
     public Devise() {
     }
@@ -126,6 +130,15 @@ public class Devise implements Serializable {
     public void setHasTaux(boolean hasTaux) {
         this.hasTaux = hasTaux;
     }
+
+    public BigDecimal getTauxChange() {
+        return tauxChange;
+    }
+
+    public void setTauxChange(BigDecimal tauxChange) {
+        this.tauxChange = tauxChange;
+    }
     
     
+
 }

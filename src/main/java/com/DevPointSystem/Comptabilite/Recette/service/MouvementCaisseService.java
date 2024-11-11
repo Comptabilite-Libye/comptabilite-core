@@ -5,18 +5,13 @@
 package com.DevPointSystem.Comptabilite.Recette.service;
 
 import com.DevPointSystem.Comptabilite.Parametrage.domaine.Caisse;
-import com.DevPointSystem.Comptabilite.Parametrage.domaine.Compteur;
 import com.DevPointSystem.Comptabilite.Parametrage.repository.CaisseRepo;
 import com.DevPointSystem.Comptabilite.Parametrage.service.CompteurService;
 import com.DevPointSystem.Comptabilite.Recette.domaine.MouvementCaisse;
 import com.DevPointSystem.Comptabilite.Recette.dto.MouvementCaisseDTO;
-import com.DevPointSystem.Comptabilite.Recette.dto.SoldeCaisseDTO;
 import com.DevPointSystem.Comptabilite.Recette.factory.MouvementCaisseFactory;
 import com.DevPointSystem.Comptabilite.Recette.repository.MouvementCaisseRepo;
-import com.DevPointSystem.Comptabilite.web.Util.Helper;
 import com.google.common.base.Preconditions;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +44,7 @@ public class MouvementCaisseService {
             if (dto.getCodeCaisseTr() == null) {
 
             } else {
-                Caisse caisse = caisseRepo.getReferenceById(dto.getCodeCaisseTr());
+                Caisse caisse = caisseRepo.findByCode(dto.getCodeCaisseTr());
                 dto.setDesignationCaisse(caisse.getDesignationAr());
             } 
         }
@@ -58,7 +53,7 @@ public class MouvementCaisseService {
  
     @Transactional(readOnly = true)
     public MouvementCaisseDTO findOne(Integer code) {
-        MouvementCaisse domaine = mouvementCaisseRepo.getReferenceById(code);
+        MouvementCaisse domaine = mouvementCaisseRepo.findByCode(code);
         Preconditions.checkArgument(domaine.getCode() != null, "error.MouvementCaisseNotFound");
         return MouvementCaisseFactory.mouvementCaisseToMouvementCaisseDTO(domaine);
     }
@@ -85,7 +80,7 @@ public class MouvementCaisseService {
             if (dto.getCodeCaisseTr() == null) {
 
             } else {
-                Caisse caisse = caisseRepo.getReferenceById(dto.getCodeCaisseTr());
+                Caisse caisse = caisseRepo.findByCode(dto.getCodeCaisseTr());
                 dto.setDesignationCaisse(caisse.getDesignationAr());
             } 
         }

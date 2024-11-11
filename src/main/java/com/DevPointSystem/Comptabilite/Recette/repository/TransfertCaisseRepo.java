@@ -14,8 +14,12 @@ import org.springframework.stereotype.Repository;
  * @author Administrator
  */
 @Repository
-public interface TransfertCaisseRepo extends JpaRepository<TransfertCaisse, Integer>{
-    
+public interface TransfertCaisseRepo extends JpaRepository<TransfertCaisse, Integer> {
+
     List<TransfertCaisse> findTransfertCaisseByCodeEtatApprouver(Integer codeEtatApprouver);
+
     List<TransfertCaisse> findAllByOrderByCodeSaisieDesc();
+
+    TransfertCaisse findByCode(Integer code);
+
 }

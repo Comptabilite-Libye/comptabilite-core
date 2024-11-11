@@ -4,6 +4,7 @@
  */
 package com.DevPointSystem.Comptabilite.Parametrage.dto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -11,25 +12,25 @@ import java.util.Date;
  * @author Administrator
  */
 public class DeviseDTO {
-     private Integer code;
-  
-         private String codeSaisie;
-         
-         
+
+    private Integer code;
+
+    private String codeSaisie;
+
     private String designationAr;
- 
-    private String designationLt; 
+
+    private String designationLt;
     private boolean actif;
-  
+
     private String userCreate;
- 
+
     private Date dateCreate;
-        private boolean hasTaux;
+    private boolean hasTaux;
+
+    private BigDecimal tauxChange;
 
     public DeviseDTO() {
     }
-
-    
 
     public Integer getCode() {
         return code;
@@ -38,7 +39,6 @@ public class DeviseDTO {
     public void setCode(Integer code) {
         this.code = code;
     }
- 
 
     public String getDesignationAr() {
         return designationAr;
@@ -95,5 +95,14 @@ public class DeviseDTO {
     public void setHasTaux(boolean hasTaux) {
         this.hasTaux = hasTaux;
     }
+
+    public BigDecimal getTauxChange() {
+        return tauxChange;
+    }
+
+    public void setTauxChange(BigDecimal tauxChange) {
+        this.tauxChange = tauxChange;
+    }
+
     
 }

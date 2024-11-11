@@ -60,7 +60,7 @@ public class TransfertCaisseService {
 
     @Transactional(readOnly = true)
     public TransfertCaisseDTO findOne(Integer code) {
-        TransfertCaisse domaine = transfertCaisseRepo.getReferenceById(code);
+        TransfertCaisse domaine = transfertCaisseRepo.findByCode(code);
         Preconditions.checkArgument(domaine.getCode() != null, "error.TransfertCaisseNotFound");
         return TransfertCaisseFactory.transfertCaisseToTransfertCaisseDTO(domaine);
     }
@@ -99,7 +99,7 @@ public class TransfertCaisseService {
     }
 //
 //    public TransfertCaisse update(TransfertCaisseDTO dTO) { 
-//        TransfertCaisse domaine = transfertCaisseRepo.getReferenceById(dTO.getCode());
+//        TransfertCaisse domaine = transfertCaisseRepo.findByCode(dTO.getCode());
 //        Preconditions.checkArgument(true, "error.TransfertCaisseNotFound");
 //    
 //        domaine.getDetailsTransfertCaisses().clear();
@@ -111,7 +111,7 @@ public class TransfertCaisseService {
 
 //    public TransfertCaisseDTO update(TransfertCaisseDTO dto) {
 //
-//        TransfertCaisse inBase = transfertCaisseRepo.getReferenceById(dto.getCode());
+//        TransfertCaisse inBase = transfertCaisseRepo.findByCode(dto.getCode());
 //        Preconditions.checkArgument(inBase != null, "error.TransfertCaisseNotFound");
 ////        inBase.getDetailsTransfertCaisses().clear();
 //
@@ -139,7 +139,7 @@ public class TransfertCaisseService {
 
         }
 
-        TransfertCaisse inBase = transfertCaisseRepo.getReferenceById(dto.getCode());
+        TransfertCaisse inBase = transfertCaisseRepo.findByCode(dto.getCode());
         Preconditions.checkArgument(inBase != null, "error.TransfertCaisseNotFound");
         inBase = TransfertCaisseFactory.transfertCaisseDTOToTransfertCaisse(inBase, dto);
         inBase = transfertCaisseRepo.save(inBase);
@@ -165,7 +165,7 @@ public class TransfertCaisseService {
 
         BigDecimal soldeTransfered = DebitCredit.subtract(mnt);
 
-        TransfertCaisse inBase = transfertCaisseRepo.getReferenceById(dto.getCode());
+        TransfertCaisse inBase = transfertCaisseRepo.findByCode(dto.getCode());
         Preconditions.checkArgument(inBase != null, "error.TransfertCaisseNotFound");
 
         MouvementCaisse mvtCaisse = new MouvementCaisse();
@@ -278,7 +278,7 @@ public class TransfertCaisseService {
     }
 
     public TransfertCaisseDTO CancelapprouveAC(TransfertCaisseDTO dto) {
-        TransfertCaisse inBase = transfertCaisseRepo.getReferenceById(dto.getCode());
+        TransfertCaisse inBase = transfertCaisseRepo.findByCode(dto.getCode());
         Preconditions.checkArgument(inBase != null, "error.TransfertCaisseNotFound");
 
         Integer oldEtatApprouve = inBase.getCodeEtatApprouver();

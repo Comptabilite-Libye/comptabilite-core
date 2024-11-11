@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/depense/")
 public class AvanceFournisseurRessource {
+
     private final AvanceFournisseurService reglementFactureFournisseurService;
     private final ParamService paramService;
     private final SocieteService societeService;
@@ -48,8 +49,6 @@ public class AvanceFournisseurRessource {
         this.societeService = societeService;
         this.accessUserService = accessUserService;
     }
-
-   
 
     @GetMapping("avance_fournisseur/{code}")
     public ResponseEntity<AvanceFournisseurDTO> getAvanceFournisseurByCode(@PathVariable Integer code) {
@@ -67,15 +66,12 @@ public class AvanceFournisseurRessource {
         Collection<AvanceFournisseurDTO> dTOs = reglementFactureFournisseurService.findByCodeFournisseur(codeFournisseur);
         return ResponseEntity.ok().body(dTOs);
     }
-    
-//        @GetMapping("reglement_facture_fournisseur/RegfactureBy")
-//    public ResponseEntity<Collection<AvanceFournisseurDTO>> getAvanceFournisseurByCodeFournisseurAndDevise(@RequestParam Integer codeFournisseur ,@RequestParam Integer codeDevise ) {
-//        Collection<AvanceFournisseurDTO> dTOs = reglementFactureFournisseurService.findByCodeFournisseurAndCodeDevise(codeFournisseur,codeDevise);
-//        return ResponseEntity.ok().body(dTOs);
-//    }
-    
-    
-    
+
+    @GetMapping("avance_fournisseur/By")
+    public ResponseEntity<Collection<AvanceFournisseurDTO>> getAvanceFournisseurByِCodeFournisseurAndNonApurer(@RequestParam Integer codeFournisseur, Boolean apurer) {
+        Collection<AvanceFournisseurDTO> dTOs = reglementFactureFournisseurService.findByCodeFournisseurAndNonApurer(codeFournisseur, apurer);
+        return ResponseEntity.ok().body(dTOs);
+    }
 
     @GetMapping("avance_fournisseur/codeDevise")
     public ResponseEntity<Collection<AvanceFournisseurDTO>> getAvanceFournisseurByCodeDevise(@RequestParam Collection<Integer> codeDevise) {
@@ -89,8 +85,8 @@ public class AvanceFournisseurRessource {
         return ResponseEntity.ok().body(dto);
 
     }
-    
-        @GetMapping("avance_fournisseur/LazyEtatApprouver/{codeEtatApprouver}")
+
+    @GetMapping("avance_fournisseur/LazyEtatApprouver/{codeEtatApprouver}")
     public ResponseEntity<List<AvanceFournisseurDTO>> getReglementFactFrsByCodeEtatApprouveLazy(@PathVariable Integer codeEtatApprouver) {
         List<AvanceFournisseurDTO> dto = reglementFactureFournisseurService.findByEtatApprouverLazy(codeEtatApprouver);
         return ResponseEntity.ok().body(dto);
@@ -102,7 +98,6 @@ public class AvanceFournisseurRessource {
 //        AvanceFournisseurDTO result = reglementFactureFournisseurService.save(dTO);
 //        return ResponseEntity.created(new URI("/api/parametrage/" + result.getCode())).body(result);
 //    }
- 
     @PutMapping("avance_fournisseur/update")
     public ResponseEntity<AvanceFournisseurDTO> updateAvanceFournisseur(@Valid @RequestBody AvanceFournisseurDTO dTO, BindingResult bindingResult) throws MethodArgumentNotValidException {
         AvanceFournisseurDTO result = reglementFactureFournisseurService.updateNewWithFlush(dTO);

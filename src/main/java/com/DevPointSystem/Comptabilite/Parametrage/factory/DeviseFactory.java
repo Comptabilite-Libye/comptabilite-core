@@ -31,7 +31,8 @@ public class DeviseFactory {
             domaine.setDesignationAr(dto.getDesignationAr());
             domaine.setActif(dto.isActif());
             domaine.setDateCreate(dto.getDateCreate());
-            domaine.setUserCreate(dto.getUserCreate());
+            domaine.setUserCreate(dto.getUserCreate());    
+
 
             return domaine;
         } else {
@@ -43,7 +44,9 @@ public class DeviseFactory {
      public static Devise deviseDTOToDeviseHasTaux(DeviseDTO dto, Devise domaine) {
         if (dto != null) {
             domaine.setCode(dto.getCode());        
-            domaine.setHasTaux(dto.isHasTaux());    
+            domaine.setHasTaux(dto.isHasTaux()); 
+            domaine.setTauxChange(dto.getTauxChange());    
+  
             return domaine;
         } else {
             return null;
@@ -61,7 +64,9 @@ public class DeviseFactory {
             dto.setDesignationLt(domaine.getDesignationLt()); 
             dto.setActif(domaine.isActif());
             dto.setDateCreate(domaine.getDateCreate());
-            dto.setUserCreate(domaine.getUserCreate());
+            dto.setUserCreate(domaine.getUserCreate());   
+            dto.setTauxChange(domaine.getTauxChange());
+
 
             return dto;
         } else {

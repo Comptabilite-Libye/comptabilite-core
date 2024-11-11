@@ -52,7 +52,14 @@ public class AvanceFournisseurService {
 
     @Transactional(readOnly = true)
     public AvanceFournisseurDTO findOne(Integer code) {
-        AvanceFournisseur domaine = avanceFournisseurRepo.getReferenceById(code);
+        AvanceFournisseur domaine = avanceFournisseurRepo.findByCode(code);
+        Preconditions.checkArgument(domaine.getCode() != null, "error.AvanceFournisseurNotFound");
+        return AvanceFournisseurFactory.avanceFournisseurToAvanceFournisseurDTOUpdate(domaine);
+    }
+    
+     @Transactional(readOnly = true)
+    public AvanceFournisseurDTO findOneByCodeSaisie(String codeSaisie) {
+        AvanceFournisseur domaine = avanceFournisseurRepo.findByCodeSaisie(codeSaisie);
         Preconditions.checkArgument(domaine.getCode() != null, "error.AvanceFournisseurNotFound");
         return AvanceFournisseurFactory.avanceFournisseurToAvanceFournisseurDTOUpdate(domaine);
     }
@@ -71,16 +78,13 @@ public class AvanceFournisseurService {
         return AvanceFournisseurFactory.CollectionfAvanceToAvanceFournisseursDTOsCollection(result);
     }
 
-//    @Transactional(readOnly = true)
-//    public List<AvanceFournisseurDTO> findByCodeFournisseurAndCodeDeviseAndNotPaid(Integer codeFournisseur, Integer codeDevise, Boolean hasOrdrePaiement) {
-//        List<AvanceFournisseur> result = avanceFournisseurRepo.findByCodeFournisseurAndCodeDeviseAndHasOrdrePaiement(codeFournisseur, codeDevise, hasOrdrePaiement);
-//        return AvanceFournisseurFactory.listAvanceFournisseurToAvanceFournisseurDTOs(result);
-//    }
-//    @Transactional(readOnly = true)
-//    public List<AvanceFournisseurDTO> findByCodeFournisseurAndCodeDeviseAndNotPaidAndApprouved(Integer codeFournisseur, Integer codeDevise, Boolean hasOrdrePaiement, Integer EtatApprouve) {
-//        List<AvanceFournisseur> result = avanceFournisseurRepo.findByCodeFournisseurAndCodeDeviseAndHasOrdrePaiementAndCodeEtatApprouver(codeFournisseur, codeDevise, hasOrdrePaiement, EtatApprouve);
-//        return AvanceFournisseurFactory.listAvanceFournisseurToAvanceFournisseurDTOs(result);
-//    }
+    @Transactional(readOnly = true)
+    public List<AvanceFournisseurDTO> findByCodeFournisseurAndNonApurer(Integer  codeFournisseur,Boolean Apurer) {
+        List<AvanceFournisseur> result = avanceFournisseurRepo.findByCodeFournisseurAndApurer(codeFournisseur,Apurer);
+        return AvanceFournisseurFactory.listAvanceFournisseurToAvanceFournisseurDTOs(result);
+    }
+    
+    
     @Transactional(readOnly = true)
     public Collection<AvanceFournisseurDTO> findByCodeDevise(Collection<Integer> codeDevise) {
         Collection<AvanceFournisseur> result = avanceFournisseurRepo.findByCodeDeviseIn(Helper.removeNullValueFromCollection(codeDevise));
@@ -112,7 +116,7 @@ public class AvanceFournisseurService {
         AvanceFournisseur inBase = avanceFournisseurRepo.getReferenceById(dto.getCode());
         Preconditions.checkArgument(inBase != null, "error.AvanceFournisseurNotFound");
 
-        Preconditions.checkArgument(!inBase.getPaid().equals(Boolean.TRUE), "error.AvanceFournisseurHasOrdrePaiement");
+        Preconditions.checkArgument(!inBase.getPaid(), "error.AvanceFournisseurHasOrdrePaiement");
 
         inBase = AvanceFournisseurFactory.avanceForunisseurDTOTOAvanceFornisseur(inBase, dto);
         inBase = avanceFournisseurRepo.save(inBase);
@@ -123,7 +127,9 @@ public class AvanceFournisseurService {
     public void deleteAvanceFournisseur(Integer code) {
         Preconditions.checkArgument(avanceFournisseurRepo.existsById(code), "error.AvanceFournisseurNotFound");
         AvanceFournisseur inBase = avanceFournisseurRepo.getReferenceById(code);
-        Preconditions.checkArgument(inBase.getPaid().equals(Boolean.TRUE), "error.AvanceFournisseurPaied");
+        Preconditions.checkArgument(!inBase.getPaid(), "error.AvanceFournisseurPaied"); 
+        Preconditions.checkArgument(inBase.getCodeUserApprouver() ==null , "error.AvanceFournisseurApprouved");
+
 
         avanceFournisseurRepo.deleteById(code);
     }
@@ -134,6 +140,8 @@ public class AvanceFournisseurService {
         Preconditions.checkArgument(inBase.getPaid() != true, "error.AvanceFournisseurApprouved");
         inBase = AvanceFournisseurFactory.ApprouveAvanceFournisseurDTOToAvanceFournisseur(inBase, dto);
         inBase = avanceFournisseurRepo.save(inBase);
+        
+           System.out.println("sofiennnn  " +inBase.getCodeEtatApprouver());
         AvanceFournisseurDTO resultDTO = AvanceFournisseurFactory.avanceFournisseurToAvanceFournisseurDTO(inBase);
         return resultDTO;
     }
